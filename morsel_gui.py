@@ -82,7 +82,7 @@ class ConverterApp:
 
         ttk.Label(
             outer,
-            text=tr("文档 → Markdown / JSON"),
+            text=tr("AImorsel 文粒 · 文档 → Markdown / JSON"),
             font=("Helvetica", 18, "bold"),
         ).pack(anchor="w")
         ttk.Label(

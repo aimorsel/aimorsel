@@ -193,6 +193,8 @@ chunk_size = 400
 python3 morsel_gui.py
 ```
 
+![GUI](docs/images/gui-en.png)
+
 Drag files or folders in, tick output formats and advanced options, watch the
 log as the batch runs in a background thread. Single-file failures never abort
 the batch. Same conversion engine as the CLI.

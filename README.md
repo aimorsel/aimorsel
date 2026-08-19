@@ -264,6 +264,8 @@ chunk_size = 400
 python3 morsel_gui.py
 ```
 
+![图形界面](docs/images/gui.png)
+
 窗口分四块，从上到下：
 
 1. **拖拽区** —— 把 PDF 文件或文件夹拖进来，文件夹会自动展开
