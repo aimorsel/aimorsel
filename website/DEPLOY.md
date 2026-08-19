@@ -45,6 +45,11 @@ npx wrangler pages deploy /tmp/site --project-name aimorsel --branch main --comm
 - `ai-morsel.com` 做 301 到 aimorsel.dev（Redirect Rule / Bulk Redirects；zone 里得有一条代理过的占位记录，
   比如 `A @ 192.0.2.1`，跳转规则才会在边缘命中）。
 - `_headers` 会被自动读取：字体长缓存、CSS 一小时、全站加两个安全响应头（线上已核验）。
+- **改了 `site.css` 必须同时换 HTML 里的版本参数**：9 个页面引用的是 `assets/site.css?v=<前 8 位 sha256>`。
+  Cloudflare 边缘会按 `_headers` 把 CSS 缓存数小时（实测 max-age 14400、HIT），HTML 不缓存——只换 CSS 不改引用，
+  用户拿到新 HTML + 旧 CSS，新版面全是裸的（2026-08-19 踩过，用户看到的是「没更新」）。wrangler 的 OAuth token 没有
+  purge 权限，所以靠改 URL 而不是清缓存。一条命令：
+  `H=$(shasum -a 256 website/assets/site.css | cut -c1-8); for f in $(grep -rl 'site.css' website --include='*.html'); do sed -i '' "s#site\.css?v=[0-9a-f]*\"#site.css?v=$H\"#" $f; done`
 - 每次改站后重跑一遍线上自检：状态码 / hreflang / 下载直链 302 + Playwright
   （中英 × 桌面/手机：零横向溢出、零 pageerror、零外部请求、自托管字体已加载）。
 
