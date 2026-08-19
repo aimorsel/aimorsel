@@ -1,7 +1,8 @@
 """录 Web 服务的「上传 → 自动转换 → 结果出现」流程，输出帧序列到 frames/。
 
 不是屏幕录制：Playwright 定时截图，再拼成 GIF。帧稳定、没有鼠标乱晃，
-界面改了重跑一次就行。
+界面改了重跑一次就行。鼠标光标与点击波纹是 PIL 画上去的（按钮坐标来自
+Playwright），让新用户看清该点哪里；原生文件对话框截不到，只示意到点击为止。
 
 先起一个**干净**的服务（状态别复用：日志和「最近转换」会累积上一轮的记录，
 截出来像是转了两次）：
@@ -19,6 +20,7 @@ import os
 import sys
 import time
 from pathlib import Path
+from PIL import Image, ImageDraw
 from playwright.sync_api import sync_playwright
 
 OUT = Path("frames"); OUT.mkdir(exist_ok=True)
@@ -29,10 +31,47 @@ MD = Path(PDF).stem + ".md"                                       # 等它出现
 frames = []
 
 
+# 光标是画上去的（Playwright 截图不含鼠标）：告诉新用户该点哪里。
+# 原生文件对话框截不到，「选文件」这步只能靠光标点过去 + 文件名出现来示意。
+cursor = [640, 120]          # 当前光标位置（视口坐标），起手停在空白处
+CLICK_RING = [0]             # >0 时在光标旁画点击波纹，每帧递减
+
+
+def draw_cursor(path):
+    im = Image.open(path).convert("RGBA")
+    d = ImageDraw.Draw(im)
+    x, y = cursor
+    if CLICK_RING[0]:
+        r = 10 + 6 * (3 - CLICK_RING[0])           # 波纹向外扩
+        d.ellipse([x - r, y - r, x + r, y + r], outline="white", width=6)   # 白边垫底，蓝按钮上也看得见
+        d.ellipse([x - r, y - r, x + r, y + r], outline=(31, 95, 208), width=3)
+        CLICK_RING[0] -= 1
+    arrow = [(x, y), (x, y + 17), (x + 4, y + 13), (x + 7, y + 20),
+             (x + 10, y + 19), (x + 7, y + 12), (x + 12, y + 12)]
+    d.polygon(arrow, fill="white", outline="black")
+    im.convert("RGB").save(path)
+
+
 def shot(page, tag):
     p = OUT / f"{len(frames):03d}_{tag}.png"
     page.screenshot(path=str(p))
+    draw_cursor(p)
     frames.append(p)
+
+
+def glide(page, tag, to, steps=6, pause=70):
+    """光标从当前位置匀速滑到 to，每步截一帧。"""
+    x0, y0 = cursor
+    for i in range(1, steps + 1):
+        cursor[0] = round(x0 + (to[0] - x0) * i / steps)
+        cursor[1] = round(y0 + (to[1] - y0) * i / steps)
+        shot(page, tag); page.wait_for_timeout(pause)
+
+
+def center(page, selector, dx=None):
+    box = page.locator(selector).first.bounding_box()
+    x = box["x"] + (dx if dx is not None else box["width"] / 2)
+    return [round(x), round(box["y"] + box["height"] / 2)]
 
 
 with sync_playwright() as pw:
@@ -46,12 +85,21 @@ with sync_playwright() as pw:
     for _ in range(4):                       # 起手：空空的界面
         shot(pg, "idle"); pg.wait_for_timeout(250)
 
-    pg.set_input_files("input[type=file]", PDF)   # 选文件
+    glide(pg, "move", center(pg, "input[type=file]", dx=45))  # 滑到「选择文件」按钮
+    CLICK_RING[0] = 3
+    for _ in range(2):
+        shot(pg, "click"); pg.wait_for_timeout(120)
+    pg.set_input_files("input[type=file]", PDF)   # 选文件（对话框截不到，文件名直接出现）
     pg.wait_for_timeout(300)
     for _ in range(3):
         shot(pg, "picked"); pg.wait_for_timeout(250)
 
-    pg.click("button[type=submit], input[type=submit], .btn")  # 点上传
+    UPLOAD = "button[type=submit], input[type=submit], .btn"
+    glide(pg, "move", center(pg, UPLOAD))         # 滑到「上传」
+    CLICK_RING[0] = 3
+    for _ in range(2):
+        shot(pg, "click"); pg.wait_for_timeout(120)
+    pg.click(UPLOAD)                              # 点上传
     for _ in range(30):                      # 盯着它自己转完
         shot(pg, "run"); pg.wait_for_timeout(400)
         if pg.locator(f"text={OK}").count() and pg.locator(f"text={MD}").count():
@@ -69,6 +117,10 @@ with sync_playwright() as pw:
             " (document.body.scrollHeight - window.innerHeight) * i / n)", [i, 12])
         pg.wait_for_timeout(120)
         shot(pg, "scroll")
+    try:                                     # 最后悬停到 .md 下载链接，示意「点这里拿结果」
+        glide(pg, "move", center(pg, f"a:has-text('{MD}')"))
+    except Exception:
+        pass
     for _ in range(4):                       # 停在输出文件列表
         shot(pg, "tail"); pg.wait_for_timeout(300)
 
