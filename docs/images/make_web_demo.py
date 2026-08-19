@@ -15,6 +15,7 @@
     imgs[0].save("web-demo.gif", save_all=True, append_images=imgs[1:],
                  duration=[...], loop=0, optimize=True, disposal=2)
 """
+import os
 import sys
 import time
 from pathlib import Path
@@ -22,6 +23,9 @@ from playwright.sync_api import sync_playwright
 
 OUT = Path("frames"); OUT.mkdir(exist_ok=True)
 PDF = sys.argv[1] if len(sys.argv) > 1 else "demo.pdf"   # 要上传的演示文档
+# 英文版（服务以 MORSEL_LANG=en 起）：MORSEL_LANG=en python make_web_demo.py quarterly-report.pdf
+OK = "OK" if os.environ.get("MORSEL_LANG") == "en" else "成功"   # 状态列的「成功」字样
+MD = Path(PDF).stem + ".md"                                       # 等它出现在输出文件列表
 frames = []
 
 
@@ -50,7 +54,7 @@ with sync_playwright() as pw:
     pg.click("button[type=submit], input[type=submit], .btn")  # 点上传
     for _ in range(30):                      # 盯着它自己转完
         shot(pg, "run"); pg.wait_for_timeout(400)
-        if pg.locator("text=成功").count() and pg.locator("text=报告.md").count():
+        if pg.locator(f"text={OK}").count() and pg.locator(f"text={MD}").count():
             break
 
     for _ in range(4):                       # 结果先停一下

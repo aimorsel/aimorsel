@@ -212,7 +212,7 @@ Upload documents from the browser, watch the live log, download any output.
 Conversion options come from `config.toml`. Binds to `127.0.0.1` only by
 default; there is no access control, so don't expose it to untrusted networks.
 
-![Web demo](docs/images/web-demo.gif)
+![Web demo](docs/images/web-demo-en.gif)
 
 ## MCP server (for AI agents)
 
