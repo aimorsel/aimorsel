@@ -13,9 +13,9 @@ from pathlib import Path
 
 import pytest
 
-import i18n
+from aimorsel import i18n
 
-PROJECT = Path(__file__).resolve().parent.parent
+PROJECT = Path(__file__).resolve().parent.parent / "aimorsel"
 SOURCES = ["morsel.py", "morsel_gui.py", "morsel_web.py", "morsel_mcp.py",
            "format_adapters.py", "ocr_setup.py"]
 
@@ -33,8 +33,8 @@ def _all_keys() -> set[str]:
             keys.add(eval(m.group(1)))  # noqa: S307 —— 还原字符串转义
         for m in _ASK_PAT.finditer(text):
             keys.add(m.group(1))
-    import morsel
-    import morsel_gui
+    from aimorsel import morsel
+    from aimorsel import morsel_gui
     keys.update(label for label, _ in morsel.FORMAT_PRESETS.values())
     keys.update(label for label, _, _ in morsel_gui.FORMAT_CHOICES)
     return {k for k in keys if re.search(r"[一-鿿]", k)}  # 只检查含中文的 key

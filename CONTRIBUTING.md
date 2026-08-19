@@ -9,14 +9,14 @@ Python 3.10+ and Java 11+ (the layout engine is a Java JAR shipped inside
 `opendataloader-pdf`).
 
 ```bash
-pip install -r requirements.txt -r requirements-dev.txt
+pip install -e ".[all,dev]"
 pytest        # full suite, ~3s; Java integration tests auto-skip if java is absent
 ```
 
 ## Architecture in five rules / 架构五条规矩
 
 1. **One source of truth for options.** Every conversion parameter lives in the
-   `ConvertOptions` dataclass in `morsel.py`. CLI, interactive mode, GUI and Web
+   `ConvertOptions` dataclass in `aimorsel/morsel.py`. CLI, interactive mode, GUI and Web
    all build this object and pass it to `convert_one()`. Adding a parameter =
    add a field + translate it in `to_convert_kwargs()` + wire one line per UI.
 2. **One batch engine.** Resume, parallelism, CSV report, OCR probing and

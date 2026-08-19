@@ -5,8 +5,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import morsel
-import rtl_text as R
+from aimorsel import morsel
+from aimorsel import rtl_text as R
 
 # 逻辑序样本与它的视觉序（逐字符反转 RTL run，拉丁/数字 run 保持内部顺序）
 LOGICAL_LINE = "قرار اتخذته الجمعية العامة في 7 تشرين الأول/أكتوبر 2022"

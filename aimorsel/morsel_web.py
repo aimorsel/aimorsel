@@ -28,8 +28,8 @@ from collections import deque
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from i18n import tr
-from morsel import (
+from .i18n import tr
+from .morsel import (
     DEFAULT_CHUNK_TOKENS,
     DEFAULT_HYBRID_URL,
     DEFAULT_INPUT_DIR,
@@ -194,7 +194,7 @@ _ocr_setup_running = False
 
 def _ocr_status_text() -> str:
     try:
-        import ocr_setup
+        from . import ocr_setup
         if _ocr_setup_running:
             return tr("OCR 服务：安装/启动中…（进度见实时日志）")
         return ocr_setup.status_text()
@@ -210,7 +210,7 @@ def start_ocr_setup_thread(service: "WebService") -> bool:
 
     def worker() -> None:
         global _ocr_setup_running
-        import ocr_setup
+        from . import ocr_setup
         try:
             ocr_setup.setup_and_start(service.log)
         except Exception as err:
@@ -347,7 +347,7 @@ setInterval(refresh, 2000);
 
 def render_page() -> str:
     """把翻译文案填进模板。模板里 {{ }} 是 format 转义，占位符 {t_*} 单大括号。"""
-    import i18n as _i18n
+    from . import i18n as _i18n
 
     return PAGE_TEMPLATE.format(
         t_lang=("en" if _i18n.current_lang() == "en" else "zh"),

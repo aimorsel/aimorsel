@@ -6,7 +6,7 @@ import shutil
 
 import pytest
 
-import morsel
+from aimorsel import morsel
 from conftest import requires_java
 
 pytestmark = requires_java

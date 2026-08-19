@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import morsel_web
+from aimorsel import morsel_web
 
 
 def _multipart(filename: str, payload: bytes, boundary: str = "XBOUND") -> tuple[bytes, str]:
@@ -40,7 +40,7 @@ def test_page_template_renders():
 
 
 def test_page_template_renders_english(monkeypatch):
-    import i18n
+    from aimorsel import i18n
 
     monkeypatch.setenv("MORSEL_LANG", "en")
     monkeypatch.setattr(i18n, "_lang", None)

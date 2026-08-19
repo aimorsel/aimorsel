@@ -20,11 +20,11 @@ except Exception:  # pragma: no cover
 # 复用主项目的兼容码位表（康熙部首等）
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 try:
-    from morsel import _COMPAT_MAP  # type: ignore
+    from aimorsel.morsel import _COMPAT_MAP  # type: ignore
 except Exception:  # pragma: no cover
     _COMPAT_MAP = {}
 try:
-    from rtl_text import visual_rtl_votes as _rtl_votes  # type: ignore
+    from aimorsel.rtl_text import visual_rtl_votes as _rtl_votes  # type: ignore
 except Exception:  # pragma: no cover
     _rtl_votes = None
 

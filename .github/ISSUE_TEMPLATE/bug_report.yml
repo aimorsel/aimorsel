@@ -25,7 +25,7 @@ body:
         confidential, attaching it (or a minimal lookalike) helps enormously.
         具体命令或操作步骤；若特定文件触发且不涉密，附上文件（或一个最小复现样例）最有帮助。
       placeholder: |
-        1. python3 morsel.py report.pdf --rag-chunks
+        1. morsel report.pdf --rag-chunks
         2. ...
     validations:
       required: true

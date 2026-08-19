@@ -32,8 +32,9 @@ common_kwargs = dict(
 )
 
 # `morsel gui|web|mcp` 子命令用 importlib 动态加载，PyInstaller 静态发现不了——
-# 不点名的话打包版一敲子命令就 ModuleNotFoundError。dnd_hidden 跟着 morsel_gui 一起进。
-subcommand_hidden = ["morsel_gui", "morsel_web", "morsel_mcp"]
+# 不点名的话打包版一敲子命令就 ModuleNotFoundError。dnd_hidden 跟着 aimorsel.morsel_gui 一起进。
+# 源码已收进 aimorsel/ 包（2026-08-19 为 PyPI 发布重构），pathex 含仓库根即可找到。
+subcommand_hidden = ["aimorsel.morsel_gui", "aimorsel.morsel_web", "aimorsel.morsel_mcp"]
 
 a_cli = Analysis([os.path.join(SPECPATH, "entry_cli.py")],
                  datas=common_datas + dnd_datas, binaries=dnd_binaries,

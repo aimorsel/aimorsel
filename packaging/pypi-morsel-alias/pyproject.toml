@@ -1,0 +1,24 @@
+# PyPI 上的 `morsel` 包：只是 aimorsel 的别名，让 `pip install morsel` 也能装到同一套东西。
+# 不含任何代码；版本号跟 aimorsel 主版本走，发布流程见 packaging/PYPI.md。
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "morsel"
+version = "1.0.1"
+description = "Alias of the `aimorsel` package — the `morsel` CLI of AImorsel, a local-first document feeder for AI (PDF/Office/HTML/images → Markdown/JSON). Installs aimorsel."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "AImorsel" }]
+keywords = ["pdf", "markdown", "ai", "rag", "mcp", "document", "converter"]
+dependencies = ["aimorsel>=1.0.1"]
+
+[project.urls]
+Homepage = "https://aimorsel.dev"
+Repository = "https://github.com/aimorsel/aimorsel"
+
+# 空包：没有模块可装，只靠 dependencies 带出 aimorsel
+[tool.hatch.build.targets.wheel]
+bypass-selection = true

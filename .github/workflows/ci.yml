@@ -26,9 +26,19 @@ jobs:
         with:
           distribution: temurin
           java-version: "21"
-      - name: 安装依赖
+      - name: 安装依赖（可编辑安装，顺带验证 pyproject 的依赖与 extras 可解析）
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt -r requirements-dev.txt
+          pip install -e ".[all,dev]"
       - name: 运行测试
         run: pytest
+      - name: 构建 wheel 并从 wheel 安装冒烟（PyPI 包真能装、命令真能起）
+        run: |
+          pip install build
+          python -m build --outdir dist/pypi
+          pip install --force-reinstall --no-deps dist/pypi/*.whl
+          cd "${RUNNER_TEMP}"
+          morsel --version
+          morsel web --help
+          morsel mcp --help
+          python -m aimorsel --help

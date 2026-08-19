@@ -2,6 +2,12 @@
 
 **文档 → Markdown / JSON 转换工具**
 
+[![CI](https://github.com/aimorsel/aimorsel/actions/workflows/ci.yml/badge.svg)](https://github.com/aimorsel/aimorsel/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/aimorsel/aimorsel?label=release)](https://github.com/aimorsel/aimorsel/releases/latest)
+[![PyPI](https://img.shields.io/pypi/v/aimorsel)](https://pypi.org/project/aimorsel/)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Website](https://img.shields.io/badge/website-aimorsel.dev-1F5FD0)](https://aimorsel.dev)
+
 **中文**：本页 | **English**: [README.en.md](README.en.md)
 
 一个本地运行的文档结构化提取小工具，把 **PDF、Word（docx）、Excel（xlsx）、
@@ -39,18 +45,18 @@ PDF 底层用 [opendataloader-pdf](https://github.com/opendataloader-project/ope
 
 提供四种用法，转换逻辑完全相同：
 
-| 版本 | 文件 | 适合场景 |
+| 版本 | 命令 | 适合场景 |
 |---|---|---|
-| 命令行版 | `morsel.py` | 终端里快速转换、批量处理、写进自动化脚本 |
-| 图形界面版 | `morsel_gui.py` | 拖拽文件、点选输出目录，不想碰命令行 |
-| Web 常驻服务 | `morsel_web.py` | 挂后台盯文件夹，浏览器里上传/下载 |
-| MCP Server | `morsel_mcp.py` | 让 Claude Code 等 Agent 直接读本机文档 |
+| 命令行版 | `morsel` | 终端里快速转换、批量处理、写进自动化脚本 |
+| 图形界面版 | `morsel gui` | 拖拽文件、点选输出目录，不想碰命令行 |
+| Web 常驻服务 | `morsel web` | 挂后台盯文件夹，浏览器里上传/下载 |
+| MCP Server | `morsel mcp` | 让 Claude Code 等 Agent 直接读本机文档 |
 
-本页命令都按**从源码运行**写（`python3 morsel.py …`）。装了打包好的安装包之后
-命令是 `morsel`，三个副入口走子命令：
+不管是下载安装包、`pip install` 还是从源码装，命令都是同一个 `morsel`，
+三个副入口走子命令：
 
 ```bash
-morsel 报告.pdf        # 转换，等同于 python3 morsel.py 报告.pdf
+morsel 报告.pdf        # 转换
 morsel gui             # 图形界面
 morsel web             # Web 常驻服务
 morsel mcp             # MCP Server（供 Agent 调用）
@@ -60,39 +66,49 @@ morsel mcp             # MCP Server（供 Agent 调用）
 目录名，不能让 `morsel web` 变成起服务），此时会打一行提示，要启动对应功能改用独立命令
 `morsel-gui` / `morsel-web` / `morsel-mcp`。
 
-## 环境要求
+## 安装
 
-需要 **Python 3.10+** 和 **Java 11 或更高版本**
-（核心引擎 `opendataloader-pdf` 要求 Python ≥3.10）。
+三条路，按需选一条：
 
-Java 是必需的——真正干活的版面分析引擎是 Java 写的，Python 包只是一层调用壳。
+| 方式 | 适合谁 | 前提 |
+|---|---|---|
+| **下载安装包**（[GitHub Releases](https://github.com/aimorsel/aimorsel/releases/latest)） | 不想装任何东西的人 | 无。包里自带精简 Java 运行时，不用装 Python 也不用装 Java。macOS 包已签名+公证，双击直接开；Windows 包未签名，SmartScreen 会提示一次（「更多信息 → 仍要运行」） |
+| **`pip install`** | 已有 Python 环境、想把它当命令行工具或 MCP Server 用 | **Python 3.10+ 和 Java 11+**（JRE 不在 pip 包里，引擎是 Java 写的） |
+| **从源码** | 要改代码、跑测试 | 同上 |
 
 ```bash
-# 确认 Java 已装好
-java -version
+# pip 方式（推荐带 [all]：docx/xlsx/pptx/图片输入、GUI 拖拽、坏 PDF 修复全都有）
+pip install "aimorsel[all]"
+morsel --version
 
-# 安装依赖
-pip install -r requirements.txt
+# 源码方式
+git clone https://github.com/aimorsel/aimorsel.git && cd aimorsel
+pip install -e ".[all,dev]"
+pytest
 ```
 
 如果还没有 Java，macOS 上装一个即可：
 
 ```bash
 brew install --cask temurin
+java -version
 ```
 
-核心依赖是 `opendataloader-pdf`（PDF 引擎，自带 JAR 包）。其余全部可选：
-`tkinterdnd2`（GUI 拖拽）、`pdfplumber`（转换失败兜底 + 扫描件快速探测）、
-`pikepdf`（结构损坏 / 被截断的 PDF 先修复再转换）、
-`python-docx` / `openpyxl` / `python-pptx` / `pillow`（对应 docx/xlsx/pptx/图片输入；HTML 用标准库解析，无需额外依赖）——
-缺哪个只影响对应功能，报错里会直接给出安装命令。
+pip 包的必装依赖只有 `opendataloader-pdf`（PDF 引擎，自带 JAR）和 `pdfplumber`（转换失败兜底 +
+扫描件快速探测）。其余按 extras 分组，缺哪个只影响对应功能，报错里会直接给出安装命令：
+`[office]` = python-docx / openpyxl / python-pptx（docx/xlsx/pptx 输入）、`[images]` = pillow（图片输入）、
+`[repair]` = pikepdf（结构损坏 / 被截断的 PDF 先修复再转换）、`[gui]` = tkinterdnd2（GUI 拖拽）。
+HTML 用标准库解析，无需额外依赖。
+
+pip 装的 `morsel` 把 `raw/`、`output/`、`config.toml` 都放在**当前工作目录**下（源码运行时放在仓库根目录，
+安装包放在可执行文件旁边）。
 
 ## 快速开始
 
 把要转换的文件放进 `raw/` 目录，然后：
 
 ```bash
-python3 morsel.py
+morsel
 ```
 
 按提示选文件、选格式、回车确认，结果就出现在 `output/` 里了。
@@ -133,11 +149,11 @@ python3 morsel.py
 知道要转什么，就跳过交互一步到位：
 
 ```bash
-python3 morsel.py report.pdf                    # 单个文件
-python3 morsel.py raw/                          # 整个文件夹，递归查找
-python3 morsel.py a.pdf b.pdf -f markdown       # 多个文件，只要 Markdown
-python3 morsel.py raw/ -o ~/Desktop/结果         # 指定输出目录
-python3 morsel.py secret.pdf -p 我的密码         # 加密 PDF
+morsel report.pdf                    # 单个文件
+morsel raw/                          # 整个文件夹，递归查找
+morsel a.pdf b.pdf -f markdown       # 多个文件，只要 Markdown
+morsel raw/ -o ~/Desktop/结果         # 指定输出目录
+morsel secret.pdf -p 我的密码         # 加密 PDF
 ```
 
 基础参数：
@@ -167,7 +183,7 @@ python3 morsel.py secret.pdf -p 我的密码         # 加密 PDF
 例如：只转前 3 页、提取图片、开脱敏：
 
 ```bash
-python3 morsel.py 合同.pdf --pages 1-3 --images external --sanitize
+morsel 合同.pdf --pages 1-3 --images external --sanitize
 ```
 
 OCR 参数（第二阶段能力，处理扫描件，详见下面的「扫描件与 OCR」）：
@@ -190,8 +206,8 @@ OCR 参数（第二阶段能力，处理扫描件，详见下面的「扫描件�
 监听模式示例——盯住 `raw/`，丢进去的 PDF 自动转换（配合网盘同步就是全自动流水线）：
 
 ```bash
-python3 morsel.py --watch                 # 监听默认的 raw/
-python3 morsel.py ~/Dropbox/收件 --watch   # 监听任意文件夹
+morsel --watch                 # 监听默认的 raw/
+morsel ~/Dropbox/收件 --watch   # 监听任意文件夹
 ```
 
 实现上用的是轮询而非 watchdog 库：零额外依赖，且靠「连续两轮文件未变化才转换」
@@ -261,7 +277,7 @@ chunk_size = 400
 ## 图形界面版
 
 ```bash
-python3 morsel_gui.py
+morsel gui
 ```
 
 ![图形界面](docs/images/gui.png)
@@ -287,8 +303,8 @@ python3 morsel_gui.py
 把「文件夹监听」和一个本机网页界面合在一起，适合挂在后台长期跑：
 
 ```bash
-python3 morsel_web.py                          # 打开 http://127.0.0.1:8008
-python3 morsel_web.py --port 9000 --input ~/Dropbox/收件
+morsel web                          # 打开 http://127.0.0.1:8008
+morsel web --port 9000 --input ~/Dropbox/收件
 ```
 
 浏览器里可以：**上传文件**（保存进监听目录后自动转换）、看**实时日志**和最近转换结果、
@@ -301,6 +317,19 @@ python3 morsel_web.py --port 9000 --input ~/Dropbox/收件
 零额外依赖（纯 Python 标准库）。转换选项（格式、OCR、并发、RAG 分块等）从
 `config.toml` 读取；默认只绑定本机 `127.0.0.1`，需要局域网访问时 `--host 0.0.0.0`
 （注意该服务没有访问控制，别暴露到不可信网络）。
+
+## MCP Server（给 AI Agent 用）
+
+`morsel mcp` 把转换能力暴露给 Claude Code 等 MCP 客户端——纯标准库实现，stdio 传输。
+照 `.mcp.json.example` 注册（命令就是 `morsel mcp`；`claude mcp add aimorsel -- morsel mcp` 一行也行），Agent 就拿到 8 个工具，
+其中三个是**渐进式披露**，专为不浪费上下文地读大文档而设：
+
+- `get_outline` —— 标题树 + 每节 token 数，几百 token 看清全文结构
+- `get_section` —— 按标题取某一节（含子节），模糊匹配
+- `search_documents` —— 跨已转换文档全文检索，命中带页码和标题路径
+- 其余五个：`convert_pdf`、`read_pdf_markdown`、`extract_tables`、`get_chunks`、`qa_check`
+
+输出统一进 `output/`，与命令行共用断点续传清单：Agent 重复读同一份文件秒回。
 
 ## 输出说明
 
@@ -363,19 +392,25 @@ output/
 
 ```
 aimorsel/
-├── morsel.py           # 命令行版，也是核心转换逻辑 + 格式路由所在
-├── morsel_gui.py       # 图形界面版，复用 morsel.py 的转换函数
-├── morsel_web.py       # Web 常驻服务版（监听文件夹 + 浏览器界面）
-├── format_adapters.py  # 多格式适配器（docx/xlsx/pptx/HTML 解析、图片包装 PDF）
-├── packaging/          # 打包脚本（build.sh + PyInstaller spec + 精简 JRE）
-├── config.toml         # 常用参数默认值（模板全注释，按需启用）
-├── requirements.txt    # 依赖声明
-├── README.md           # 本文件
-├── raw/                # 放待转换的文件（默认扫描目录）
-└── output/             # 转换结果
+├── aimorsel/               # Python 包（pip 装的就是它）
+│   ├── morsel.py           #   命令行入口，也是核心转换逻辑 + 格式路由所在
+│   ├── morsel_gui.py       #   图形界面版，复用 morsel.py 的转换函数
+│   ├── morsel_web.py       #   Web 常驻服务版（监听文件夹 + 浏览器界面）
+│   ├── morsel_mcp.py       #   MCP Server
+│   ├── format_adapters.py  #   多格式适配器（docx/xlsx/pptx/HTML 解析、图片包装 PDF）
+│   ├── rtl_text.py         #   RTL 视觉序还原
+│   ├── i18n.py             #   界面文案中英切换
+│   └── ocr_setup.py        #   OCR 服务一键安装/启动
+├── pyproject.toml          # 包元数据、依赖、`morsel` 等命令的注册
+├── packaging/              # 安装包构建（PyInstaller spec + 精简 JRE + 签名）
+├── tests/                  # pytest 套件
+├── config.toml             # 常用参数默认值（模板全注释，按需启用）
+├── README.md               # 本文件
+├── raw/                    # 放待转换的文件（默认扫描目录）
+└── output/                 # 转换结果
 ```
 
-各版本共用同一套转换逻辑：GUI/Web 直接 import 了 `morsel.py` 里的
+各版本共用同一套转换逻辑：GUI/Web/MCP 直接 import 了 `morsel.py` 里的
 `convert_one()` 和 `find_inputs()`。改转换行为只需要动 `morsel.py` 一处，其余会跟着变。
 
 ### 工作原理
@@ -403,8 +438,8 @@ OCR 模型（依赖较重），所以**按需启动**，不装也不影响普通
 ### 一键安装（推荐）
 
 ```bash
-python3 morsel.py --setup-ocr          # 自动建独立环境、装依赖（几个 GB）、启动服务
-python3 morsel.py --stop-ocr           # 停止服务
+morsel --setup-ocr          # 自动建独立环境、装依赖（几个 GB）、启动服务
+morsel --stop-ocr           # 停止服务
 ```
 
 GUI 里也有「启用扫描件支持…」按钮，Web 界面同样有对应按钮——点一下等装完即可，
@@ -431,13 +466,13 @@ opendataloader-pdf-hybrid --port 5002 --ocr-lang "ch_sim,en"
 
 ```bash
 # auto：自动检测，只有疑似扫描件才走 OCR（默认，普通 PDF 不受影响）
-python3 morsel.py raw/
+morsel raw/
 
 # force：所有文件都强制走 OCR
-python3 morsel.py 扫描件.pdf --ocr force
+morsel 扫描件.pdf --ocr force
 
 # off：完全不用 OCR，也不探测服务
-python3 morsel.py raw/ --ocr off
+morsel raw/ --ocr off
 ```
 
 - **auto** 模式下，工具会先快速探测每个文件的文字密度：文字正常的直接普通转换，
@@ -697,7 +732,7 @@ HTML 输入里的 MathML 公式（维基百科等）会以 LaTeX 文本形式保
   整包约 112MB。`raw/`、`output/`、`config.toml` 都在可执行文件旁边。
   注意：未做代码签名（其他 Mac 首次打开需在「系统设置-隐私与安全性」放行），
   只适用同架构 macOS（Apple Silicon），OCR 服务（docling）不在包内、仍需单独安装
-- ✅ **本地 Web 界面** —— `morsel_web.py` 已实现（纯标准库，见上面的「Web 常驻服务」），
+- ✅ **本地 Web 界面** —— `morsel web` 已实现（纯标准库，见上面的「Web 常驻服务」），
   监听 + 上传 + 日志 + 产物下载一体；想换更现代的桌面 GUI（PySide6）仍可另议
 - ✅ **监听文件夹** —— `--watch` 盯着某个目录，丢进去的 PDF 自动转换，
   配合网盘同步就是一个全自动的文档处理流水线（轮询实现，零额外依赖，

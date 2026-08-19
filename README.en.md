@@ -2,6 +2,12 @@
 
 **Document → Markdown / JSON converter**
 
+[![CI](https://github.com/aimorsel/aimorsel/actions/workflows/ci.yml/badge.svg)](https://github.com/aimorsel/aimorsel/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/aimorsel/aimorsel?label=release)](https://github.com/aimorsel/aimorsel/releases/latest)
+[![PyPI](https://img.shields.io/pypi/v/aimorsel)](https://pypi.org/project/aimorsel/)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Website](https://img.shields.io/badge/website-aimorsel.dev-1F5FD0)](https://aimorsel.dev)
+
 **中文**: [README.md](README.md) | **English**: this page
 
 A local document-extraction tool that converts **PDF, Word (docx), Excel (xlsx),
@@ -13,7 +19,7 @@ wrapped in a friendly CLI, GUI, web service and MCP server.
 **Fully offline — your files never leave your machine.** Ideal for papers,
 reports, contracts and course material that must not be uploaded to online services.
 
-![Web UI](docs/images/web-ui.png)
+![Web UI](docs/images/web-ui-en.png)
 
 ## What it does
 
@@ -40,47 +46,60 @@ Two typical outputs:
 - **Markdown** — clean body text: read it, archive it, or feed it to an LLM
 - **JSON** — the full structure tree, ideal for programmatic post-processing
 
-## Requirements
+## Install
 
-**Python 3.10+** and **Java 11+** (the layout engine is written in Java;
-`opendataloader-pdf` requires Python ≥ 3.10).
+Three routes — pick one:
+
+| Route | Who it's for | Prerequisites |
+|---|---|---|
+| **Download a package** ([GitHub Releases](https://github.com/aimorsel/aimorsel/releases/latest)) | Anyone who doesn't want to install anything | None. A trimmed Java runtime is bundled, so neither Python nor Java is needed. macOS builds are signed + notarized (double-click and go); the Windows build is unsigned, so SmartScreen warns once ("More info → Run anyway") |
+| **`pip install`** | You already have Python and want the CLI / MCP server | **Python 3.10+ and Java 11+** (the JRE is *not* in the pip package — the layout engine is Java) |
+| **From source** | You want to hack on it or run the tests | Same as above |
 
 ```bash
-java -version                      # check Java
-pip install -r requirements.txt    # install dependencies
+# pip (recommended with [all]: docx/xlsx/pptx/image input, GUI drag & drop, damaged-PDF repair)
+pip install "aimorsel[all]"
+morsel --version
+
+# from source
+git clone https://github.com/aimorsel/aimorsel.git && cd aimorsel
+pip install -e ".[all,dev]"
+pytest
 ```
 
-On macOS, the easiest way to get Java:
+No Java yet? On macOS:
 
 ```bash
 brew install --cask temurin
+java -version
 ```
 
-The core dependency is `opendataloader-pdf` (ships its own JAR). Everything else
-is optional: `tkinterdnd2` (GUI drag & drop), `pdfplumber` (fallback extraction +
-fast scanned-file probing), `pikepdf` (repairs damaged / truncated PDFs before conversion), `python-docx` / `openpyxl` / `python-pptx` / `pillow`
-(docx/xlsx/pptx/image input; HTML uses the standard library, no extra dependency). A missing library only disables its own feature,
-and the error message tells you the exact `pip install` command.
+The pip package's hard dependencies are just `opendataloader-pdf` (the PDF engine, ships its own JAR)
+and `pdfplumber` (fallback extraction + fast scanned-file probing). Everything else is an extra —
+a missing library only disables its own feature, and the error message tells you the exact
+`pip install` command: `[office]` = python-docx / openpyxl / python-pptx (docx/xlsx/pptx input),
+`[images]` = pillow (image input), `[repair]` = pikepdf (repairs damaged / truncated PDFs before
+conversion), `[gui]` = tkinterdnd2 (GUI drag & drop). HTML uses the standard library, no extra dependency.
 
-> Prefer zero setup? Grab the standalone build from GitHub Releases — it bundles
-> a trimmed JRE, so neither Python nor Java is needed.
+A pip-installed `morsel` keeps `raw/`, `output/` and `config.toml` in the **current working
+directory** (running from a source checkout uses the repository root; the packaged build uses
+the folder next to the executable).
 
 ## Quick start
 
 Drop files into `raw/`, then:
 
 ```bash
-python3 morsel.py
+morsel
 ```
 
 Pick files, pick formats, hit Enter — results appear in `output/`.
 
-Commands on this page are written for **running from source** (`python3 morsel.py …`).
-With the packaged build installed the command is `morsel`, and the three secondary
-entry points are subcommands:
+Whether you downloaded a package, used `pip install` or run from source, the command is
+the same `morsel`, and the three secondary entry points are subcommands:
 
 ```bash
-morsel report.pdf      # convert; same as python3 morsel.py report.pdf
+morsel report.pdf      # convert
 morsel gui             # graphical interface
 morsel web             # resident web service
 morsel mcp             # MCP server (for agents)
@@ -91,18 +110,18 @@ A real file **or directory** named `gui`/`web`/`mcp` in the current directory wi
 "start the service"). You get a one-line note when that happens; use the standalone
 commands `morsel-gui` / `morsel-web` / `morsel-mcp` to start those instead.
 
-![CLI](docs/images/cli.png)
+![CLI](docs/images/cli-en.png)
 
 ## Command line
 
 ### Direct conversion
 
 ```bash
-python3 morsel.py report.pdf                  # single file
-python3 morsel.py raw/                        # whole folder, recursive
-python3 morsel.py a.pdf b.docx -f markdown    # multiple files, Markdown only
-python3 morsel.py raw/ -o ~/Desktop/out       # custom output directory
-python3 morsel.py secret.pdf -p mypassword    # encrypted PDF
+morsel report.pdf                  # single file
+morsel raw/                        # whole folder, recursive
+morsel a.pdf b.docx -f markdown    # multiple files, Markdown only
+morsel raw/ -o ~/Desktop/out       # custom output directory
+morsel secret.pdf -p mypassword    # encrypted PDF
 ```
 
 Basic options:
@@ -190,7 +209,7 @@ chunk_size = 400
 ## GUI
 
 ```bash
-python3 morsel_gui.py
+morsel gui
 ```
 
 ![GUI](docs/images/gui-en.png)
@@ -204,8 +223,8 @@ the batch. Same conversion engine as the CLI.
 A local web page plus folder watching, meant to run in the background:
 
 ```bash
-python3 morsel_web.py                # open http://127.0.0.1:8008
-python3 morsel_web.py --port 9000 --input ~/Dropbox/inbox
+morsel web                # open http://127.0.0.1:8008
+morsel web --port 9000 --input ~/Dropbox/inbox
 ```
 
 Upload documents from the browser, watch the live log, download any output.
@@ -216,8 +235,9 @@ default; there is no access control, so don't expose it to untrusted networks.
 
 ## MCP server (for AI agents)
 
-`morsel_mcp.py` exposes the converter to Claude Code and other MCP clients —
-pure stdlib, stdio transport. Register it (see `.mcp.json.example`) and an agent
+`morsel mcp` exposes the converter to Claude Code and other MCP clients —
+pure stdlib, stdio transport. Register it (see `.mcp.json.example`, or just
+`claude mcp add aimorsel -- morsel mcp`) and an agent
 gets 8 tools, including **progressive disclosure** for reading large documents
 without wasting context:
 
@@ -250,8 +270,8 @@ automatically (`--ocr auto`, the default) and routes them to a local OCR
 service. One-click setup (recommended):
 
 ```bash
-python3 morsel.py --setup-ocr          # isolated env + dependencies (several GB) + start
-python3 morsel.py --stop-ocr           # stop the managed service
+morsel --setup-ocr          # isolated env + dependencies (several GB) + start
+morsel --stop-ocr           # stop the managed service
 ```
 
 The GUI and web UI have an "Enable scanned-document support" button that does
@@ -410,14 +430,19 @@ All of these are tracked as open issues labelled `known-limitation`.
 
 ```
 aimorsel/
-├── morsel.py           # CLI + core conversion logic + format routing
-├── morsel_gui.py       # GUI (reuses morsel.py functions)
-├── morsel_web.py       # web service (watch + browser UI)
-├── morsel_mcp.py       # MCP server for AI agents
-├── format_adapters.py  # docx/xlsx/pptx/HTML parsing, image wrapping
-├── packaging/          # PyInstaller spec + JRE bundling + signing
-├── tests/              # pytest suite (53 tests)
-└── examples/           # sample documents to try
+├── aimorsel/               # the Python package (what pip installs)
+│   ├── morsel.py           #   CLI entry + core conversion logic + format routing
+│   ├── morsel_gui.py       #   GUI (reuses morsel.py functions)
+│   ├── morsel_web.py       #   web service (watch + browser UI)
+│   ├── morsel_mcp.py       #   MCP server for AI agents
+│   ├── format_adapters.py  #   docx/xlsx/pptx/HTML parsing, image wrapping
+│   ├── rtl_text.py         #   RTL visual-order restoration
+│   ├── i18n.py             #   UI strings (zh/en)
+│   └── ocr_setup.py        #   one-command OCR service install/start
+├── pyproject.toml          # package metadata, dependencies, the `morsel` commands
+├── packaging/              # PyInstaller spec + JRE bundling + signing
+├── tests/                  # pytest suite
+└── examples/               # sample documents to try
 ```
 
 ## License

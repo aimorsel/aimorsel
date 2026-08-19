@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-import morsel  # noqa: E402
+from aimorsel import morsel  # noqa: E402
 from bench.engines._base import main  # noqa: E402
 
 _SERVER_OK: bool | None = None

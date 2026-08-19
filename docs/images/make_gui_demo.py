@@ -95,8 +95,8 @@ for old in FRAMES.glob("*.png"):
 import tkinter as tk
 from tkinter import messagebox, ttk
 
-import morsel_gui
-from i18n import tr
+from aimorsel import morsel_gui
+from aimorsel.i18n import tr
 
 # 完成弹窗会挡住 mainloop（而且截不到），录制时只要日志里的汇总行
 messagebox.showinfo = lambda *a, **k: None

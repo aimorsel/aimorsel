@@ -23,7 +23,7 @@ import time
 import venv
 from pathlib import Path
 
-from i18n import tr
+from .i18n import tr
 
 OCR_HOME = Path.home() / ".aimorsel"
 ENV_DIR = OCR_HOME / "ocr-env"
@@ -103,7 +103,7 @@ def server_command(port: int, lang: str) -> list[str]:
 
 
 def is_running(url: str | None = None) -> bool:
-    from morsel import check_ocr_server
+    from .morsel import check_ocr_server
     return check_ocr_server(url or f"http://127.0.0.1:{DEFAULT_PORT}")
 
 

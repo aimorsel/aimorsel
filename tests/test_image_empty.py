@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-import morsel
+from aimorsel import morsel
 
 
 @pytest.fixture()

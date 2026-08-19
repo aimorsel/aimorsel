@@ -26,14 +26,27 @@ website/
 cd website && python3 -m http.server 8000   # 然后开 http://localhost:8000
 ```
 
-## 推荐：Cloudflare Pages（域名已在 Cloudflare）
+## 推荐：Cloudflare Pages（域名已在 Cloudflare）—— 已按此部署（2026-08-19）
 
-1. Dashboard → Workers & Pages → Create → Pages → 连接 GitHub 仓库
-   （或 Direct Upload 直接拖 `website/` 文件夹——仓库还私有时用这个最省事）
-2. 构建设置：Framework = **None**，Build command **留空**，Output directory = `website`
-3. Custom domains 绑 **aimorsel.dev**；`ai-morsel.com` 做 301 跳到 aimorsel.dev
-   （Bulk Redirects 或 Page Rule）
-4. `_headers` 会被自动读取：字体长缓存、CSS 一小时、全站加两个安全响应头
+实际走的是 **wrangler Direct Upload**，不连 GitHub 仓库（发布仓只接收导出结果，
+没必要让 Cloudflare 盯着它）。项目名 `aimorsel`，项目域 <https://aimorsel.pages.dev>。
+
+```bash
+npx wrangler login                                   # 浏览器授权一次
+# 从剔除了 *.md 的副本部署（DEPLOY.md / DESIGN.md 是开发文档，不该上站）
+rsync -a --exclude='*.md' website/ /tmp/site/
+npx wrangler pages deploy /tmp/site --project-name aimorsel --branch main --commit-dirty=true
+```
+
+- 首次建项目：`npx wrangler pages project create aimorsel --production-branch main`。
+- 自定义域 `aimorsel.dev` / `www.aimorsel.dev` 已通过 Pages API 绑到项目；
+  **wrangler 的 OAuth token 没有 DNS 写权限**，CNAME（`@` 与 `www` → `aimorsel.pages.dev`，开代理）
+  要在 Dashboard 建，或用带 `Zone.DNS:Edit` 的 API token 建。
+- `ai-morsel.com` 做 301 到 aimorsel.dev（Redirect Rule / Bulk Redirects；zone 里得有一条代理过的占位记录，
+  比如 `A @ 192.0.2.1`，跳转规则才会在边缘命中）。
+- `_headers` 会被自动读取：字体长缓存、CSS 一小时、全站加两个安全响应头（线上已核验）。
+- 每次改站后重跑一遍线上自检：状态码 / hreflang / 下载直链 302 + Playwright
+  （中英 × 桌面/手机：零横向溢出、零 pageerror、零外部请求、自托管字体已加载）。
 
 ## 备选：GitHub Pages
 
@@ -45,20 +58,21 @@ Settings → Pages → Deploy from branch → `main` / `website/`。
 
 **占位（现在故意留空，不填假值）**
 
-- [ ] 三个平台的下载直链——首个正式 Release 出来后填进
-      `download/index.html` 与两个首页的下载卡（中英各三处，共 12 个位置）
-- [ ] 首次运行提示的措辞——签名/公证的实际行为，等首个正式版实跑后按真实情况写
-      （`download/index.html` 里那条橙色提示条，中英各一处）
-- [ ] 正式版本号（当前站上任何地方都没有版本号，这是有意的）
+- [x] 三个平台的下载直链——已填 v1.0.0 的 GitHub Release 直链
+      （`download/index.html` 与两个首页的下载卡，中英各三处，共 12 个位置；出新版本时同步改）
+- [x] 首次运行提示的措辞——已按 v1.0.0 实测写：macOS 已签名+公证双击直开；Windows 未签名，
+      SmartScreen 提示一次走「更多信息 → 仍要运行」。**不要写 `xattr -d com.apple.quarantine`
+      之类剥离 Gatekeeper 的命令**——我们签了名，写上去等于自毁「已公证」
+- [x] 正式版本号——下载卡的 `.meta` 行写 v1.0.0（站上只此一处，新版本时连同直链一起改）
 
 **上线前的一致性检查**
 
-- [ ] 站上写的 CLI 命令是 `morsel`，注册命令是 `morsel mcp`——
-      **确认更名已经落到代码和 README**，否则用户照着敲会失败
-- [ ] 站上有完整的 MCP 章节，**确认 README 也补了 MCP**，否则点进 GitHub 对不上
-- [ ] 中英两套是手写的，**逐页对一遍有没有漂移**（没有自动检查）
+- [x] 站上写的 CLI 命令是 `morsel`，注册命令是 `morsel mcp`——更名已落到代码和 README（2026-08-19 核对）
+- [x] 站上有完整的 MCP 章节，README 中英都有「MCP Server」一节（2026-08-19 补齐中文版）
+- [x] 中英两套是手写的，逐页对一遍有没有漂移（2026-08-19 对过一次：结构/链接/代码块/数字零漂移；
+      以后每次改站仍要重对）
 - [ ] 首页 `#bench` 的评测数字与 `bench/RESULTS.md` 一致（重跑评测后中英首页 + README×2 四处一起改）
-- [ ] `https://github.com/aimorsel` 下的仓库已公开，站上所有 GitHub 链接不再 404
+- [x] `https://github.com/aimorsel` 下的仓库已公开（2026-08-19），站上所有 GitHub 链接不再 404
 
 **不要做的事**
 

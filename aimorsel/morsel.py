@@ -5,9 +5,9 @@ AImorsel（文粒）—— 文档 → Markdown / JSON 提取工具（命令行�
 基于 opendataloader-pdf (https://github.com/opendataloader-project/opendataloader-pdf)
 
 用法:
-    交互模式:  python morsel.py
-    直接转换:  python morsel.py a.pdf b.pdf
-               python morsel.py raw/ -f markdown -o output
+    交互模式:  morsel            （源码运行: python -m aimorsel）
+    直接转换:  morsel a.pdf b.pdf
+               morsel raw/ -f markdown -o output
 """
 
 from __future__ import annotations
@@ -54,16 +54,26 @@ try:
 except ImportError:
     pikepdf = None
 
-import format_adapters  # 多格式输入路由（docx/xlsx/pptx/HTML/图片），项目内模块
-import i18n
-import rtl_text  # RTL 视觉序 → 逻辑序还原（bench issue #0），项目内模块
-from i18n import tr
+from . import format_adapters  # 多格式输入路由（docx/xlsx/pptx/HTML/图片），项目内模块
+from . import i18n
+from . import rtl_text  # RTL 视觉序 → 逻辑序还原（bench issue #0），项目内模块
+from .i18n import tr
 
-if getattr(sys, "frozen", False):
-    # PyInstaller 打包版：__file__ 在 _internal 里，数据目录改放可执行文件旁边
-    PROJECT_DIR = Path(sys.executable).resolve().parent
-else:
-    PROJECT_DIR = Path(__file__).resolve().parent
+def _project_dir() -> Path:
+    """raw/ output/ config.toml 的落脚点：
+    - PyInstaller 打包版：可执行文件旁边（__file__ 在 _internal 里）
+    - 源码仓库运行（含 `pip install -e .`）：仓库根目录（包目录的上一级，有 pyproject.toml）
+    - pip 装进 site-packages：当前工作目录——绝不能写进 site-packages
+    """
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).resolve().parent
+    root = Path(__file__).resolve().parent.parent
+    if (root / "pyproject.toml").is_file() and (root / "aimorsel").is_dir():
+        return root
+    return Path.cwd()
+
+
+PROJECT_DIR = _project_dir()
 DEFAULT_INPUT_DIR = PROJECT_DIR / "raw"
 DEFAULT_OUTPUT_DIR = PROJECT_DIR / "output"
 CONFIG_PATH = PROJECT_DIR / "config.toml"
@@ -695,7 +705,7 @@ def _fallback_convert(
     result.error = ""
     result.produced = produced
     result.pages = len(texts)
-    result.note = "；".join(x for x in (result.note, *notes) if x)
+    result.note = i18n.note_sep().join(x for x in (result.note, *notes) if x)
     return True
 
 
@@ -772,7 +782,7 @@ def _convert_pdf(
         produced = sorted(p for p in dest.rglob("*") if p.is_file())
         if not produced:
             result.error = tr("转换未产生任何输出文件")
-            result.note = "；".join(notes)  # 修复过的话把这条留给用户（_fallback_convert 在其上拼接）
+            result.note = i18n.note_sep().join(notes)  # 修复过的话把这条留给用户（_fallback_convert 在其上拼接）
             if not _fallback_convert(src, dest, conv_formats, options, result):
                 prune_if_empty(dest)
             result.duration = time.time() - tick
@@ -793,7 +803,7 @@ def _convert_pdf(
     finally:
         if repaired_dir is not None:
             shutil.rmtree(repaired_dir, ignore_errors=True)
-    result.note = "；".join(notes)
+    result.note = i18n.note_sep().join(notes)
     _post_process(result, options)
     return result
 
@@ -835,7 +845,7 @@ def _post_process(result: ConvertResult, options: ConvertOptions) -> None:
             notes.append(tr("质量自检失败：{err}", err=err))
     if extra_files:
         result.produced = sorted(set(result.produced) | extra_files)
-    result.note = "；".join(x for x in (result.note, *notes) if x)
+    result.note = i18n.note_sep().join(x for x in (result.note, *notes) if x)
 
 
 def _convert_office(
@@ -957,7 +967,7 @@ def _convert_image(
 
 
 def _join_notes(*parts: str) -> str:
-    return "；".join(x for x in parts if x)
+    return i18n.note_sep().join(x for x in parts if x)
 
 
 def _timing(source: Path, phase: str, since: float) -> None:
@@ -1438,7 +1448,7 @@ def _convert_task(
     use_ocr, note = decide_ocr(pdf, options, server_ok)
     result = convert_one(pdf, out_root, formats, options, use_ocr=use_ocr)
     # convert_one 可能已写入 RAG 分块说明，OCR 决策说明放前面拼接
-    result.note = "；".join(x for x in (note, result.note) if x)
+    result.note = i18n.note_sep().join(x for x in (note, result.note) if x)
     return result
 
 
@@ -2257,11 +2267,15 @@ def load_config(path: Path | None = None) -> tuple[dict, list[str]]:
 
 
 def build_parser() -> argparse.ArgumentParser:
+    from . import __version__
+
     parser = argparse.ArgumentParser(
+        prog="morsel",   # `python -m aimorsel` 时默认会显示 __main__.py
         description=tr("把文档（PDF/docx/xlsx/pptx/HTML/图片）转成 Markdown / JSON（基于 opendataloader-pdf）"),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="\n\n".join([tr("不带参数运行则进入交互模式。"), subcommand_help_text()]),
     )
+    parser.add_argument("--version", action="version", version=f"morsel {__version__}")
     parser.add_argument("inputs", nargs="*", help=tr("要转换的文件或文件夹"))
     parser.add_argument("-o", "--output", default=None, help=tr("输出目录（默认 {dir}）", dir=DEFAULT_OUTPUT_DIR))
     parser.add_argument(
@@ -2382,7 +2396,7 @@ def options_from_args(args: argparse.Namespace) -> ConvertOptions:
 # 子解析器：主命令的位置参数是「要转换的文件/目录」，加子解析器会让 `morsel a.pdf` 变成
 # 非法调用（帮助的 epilog 里列了这三个子命令）。**同名的真实文件或目录优先**（`web/`、`gui/` 是很常见的目录名，不能让
 # `morsel web/` 变成起服务），逃生舱是各自的独立可执行 morsel-gui / morsel-web / morsel-mcp。
-SUBCOMMANDS = {"gui": "morsel_gui", "web": "morsel_web", "mcp": "morsel_mcp"}
+SUBCOMMANDS = {"gui": "aimorsel.morsel_gui", "web": "aimorsel.morsel_web", "mcp": "aimorsel.morsel_mcp"}
 SUBCOMMAND_HELP = {
     "gui": "图形界面：拖文件进窗口、勾选项、点转换",
     "web": "Web 常驻服务：浏览器上传/下载 + 监听文件夹",
@@ -2447,7 +2461,7 @@ def main(argv: list[str] | None = None) -> int:
         print(tr("已加载 config.toml（{n} 项默认值）", n=len(config_overrides)))
 
     if args.setup_ocr or args.stop_ocr:
-        import ocr_setup  # 函数级导入：ocr_setup 反向依赖本模块的 check_ocr_server
+        from . import ocr_setup  # 函数级导入：ocr_setup 反向依赖本模块的 check_ocr_server
 
         try:
             if args.stop_ocr:

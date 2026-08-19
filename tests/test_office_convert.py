@@ -5,7 +5,7 @@ from __future__ import annotations
 import csv
 import json
 
-import morsel
+from aimorsel import morsel
 
 
 def test_docx_full_pipeline(sample_docx, tmp_path):

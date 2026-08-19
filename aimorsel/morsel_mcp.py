@@ -27,8 +27,9 @@ import json
 import sys
 from pathlib import Path
 
-from i18n import tr
-from morsel import (
+from . import __version__
+from .i18n import tr
+from .morsel import (
     DEFAULT_OUTPUT_DIR,
     ConvertOptions,
     _flatten_blocks,
@@ -41,7 +42,7 @@ from morsel import (
 )
 
 SERVER_NAME = "morsel"
-SERVER_VERSION = "1.0.0"
+SERVER_VERSION = __version__   # 单一来源：aimorsel/__init__.py
 PROTOCOL_VERSION = "2024-11-05"
 MAX_TEXT = 60_000  # 单次返回文本上限（字符），超出截断并附文件路径
 

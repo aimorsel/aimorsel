@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Download — AImorsel</title>
-<meta name="description" content="Download AImorsel for macOS (Apple Silicon and Intel) and Windows. A trimmed Java runtime ships inside, so unzipping is the whole install. You can also install from source." />
+<meta name="description" content="Download AImorsel for macOS (Apple Silicon and Intel) and Windows. A trimmed Java runtime ships inside, so unzipping is the whole install. You can also install with pip or from source." />
 <link rel="canonical" href="https://aimorsel.dev/en/download/" />
 <link rel="alternate" hreflang="zh-Hans" href="https://aimorsel.dev/download/" />
 <link rel="alternate" hreflang="en" href="https://aimorsel.dev/en/download/" />
@@ -43,22 +43,26 @@
       <div class="dlcard">
         <b>macOS</b>
         <span class="arch">Apple Silicon · arm64</span>
-        <span class="ph">Direct link goes in when the first release ships</span>
+        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.0/morsel-v1.0.0-macos-arm64.dmg">Download .dmg</a>
+        <span class="meta">v1.0.0 · signed &amp; notarized</span>
       </div>
       <div class="dlcard">
         <b>macOS</b>
         <span class="arch">Intel · x86_64</span>
-        <span class="ph">Direct link goes in when the first release ships</span>
+        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.0/morsel-v1.0.0-macos-x86_64.dmg">Download .dmg</a>
+        <span class="meta">v1.0.0 · signed &amp; notarized</span>
       </div>
       <div class="dlcard">
         <b>Windows</b>
         <span class="arch">x64</span>
-        <span class="ph">Direct link goes in when the first release ships</span>
+        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.0/morsel-v1.0.0-windows-x64.zip">Download .zip</a>
+        <span class="meta">v1.0.0 · unsigned</span>
       </div>
     </div>
     <p class="callout callout--gap">
-      〔Placeholder〕What the operating system prompts on first launch, and whether you need to allow
-      it manually — this paragraph gets written once the first release has actually shipped, not before.
+      <strong>First launch.</strong> The macOS packages are signed with a Developer ID and notarized by Apple —
+      double-click and they open, no override needed. The Windows package is unsigned, so SmartScreen warns once:
+      click "More info" → "Run anyway" and it won't ask again.
     </p>
   </section>
 
@@ -66,7 +70,7 @@
     <div>
       <h2 class="h2">What's in the package</h2>
       <dl class="kv">
-        <div><dt>Three programs</dt><dd>Command line, desktop app and the long-running web service, sharing one set of dependencies</dd></div>
+        <div><dt>Four programs</dt><dd>Command line, desktop app, the long-running web service and the MCP server, sharing one set of dependencies</dd></div>
         <div><dt>Java runtime</dt><dd>Trimmed with jlink — only the modules actually used</dd></div>
         <div><dt>Working folders</dt><dd><code>raw/</code> for input, <code>output/</code> for results and <code>config.toml</code> for defaults, all next to the executable</dd></div>
         <div><dt>Not included</dt><dd>The OCR service. It's heavy (a few GB), so you install it separately when you need it — see below</dd></div>
@@ -74,16 +78,24 @@
     </div>
 
     <div>
-      <h2 class="h2">Install from source</h2>
+      <h2 class="h2">Install with pip</h2>
       <p class="body-text">You'll need Python 3.10 or later and Java 11 or later. Java is required — the engine doing the layout analysis is written in Java.</p>
+<pre class="code"><span class="p">$</span> pip install "aimorsel[all]"   <span class="c"># [all] = docx/xlsx/pptx/image input + GUI drag &amp; drop + damaged-PDF repair</span>
+<span class="p">$</span> java -version                 <span class="c"># check Java is there</span>
+<span class="p">$</span> morsel --version</pre>
+      <p class="body-text">
+        The package is <code>aimorsel</code> (<a href="https://pypi.org/project/aimorsel/">PyPI</a>); <code>pip install morsel</code> is an alias that installs the same package.
+        You get the <code>morsel</code> command right away; <code>morsel gui</code> / <code>morsel web</code> / <code>morsel mcp</code> start the other three programs.
+      </p>
+      <h2 class="h2">Install from source</h2>
 <pre class="code"><span class="p">$</span> git clone https://github.com/aimorsel/aimorsel.git
 <span class="p">$</span> cd aimorsel
-<span class="p">$</span> pip install -r requirements.txt
-<span class="p">$</span> java -version   <span class="c"># check Java is there</span></pre>
+<span class="p">$</span> pip install -e ".[all]"
+<span class="p">$</span> morsel --version</pre>
       <p class="body-text">
-        Everything past the core engine is optional: a missing library only affects the format it
-        handles, and the error tells you exactly what to install. HTML parsing uses the standard
-        library and needs nothing extra.
+        Only the core engine and the fallback net are required; everything else is an optional extra:
+        a missing library only affects the feature it powers, and the error tells you exactly what to
+        install. HTML parsing uses the standard library and needs nothing extra.
       </p>
     </div>
 

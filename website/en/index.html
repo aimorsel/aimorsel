@@ -125,9 +125,9 @@
           so you can see exactly where it got things wrong.
         </p>
         <div class="legend">
-          <span><i style="border-color:var(--accent)"></i>Headings</span>
-          <span><i style="border-color:var(--ok)"></i>Body &amp; tables</span>
-          <span><i style="border-color:var(--warn);border-style:dashed"></i>Worth reviewing</span>
+          <span><i class="legend__h"></i>Headings</span>
+          <span><i class="legend__b"></i>Body &amp; tables</span>
+          <span><i class="legend__w"></i>Worth reviewing</span>
         </div>
         <p class="split__note">
           These three colours aren't a designer's pick. They're the colours the quality check
@@ -299,22 +299,25 @@
       <div class="dlcard">
         <b>macOS</b>
         <span class="arch">Apple Silicon · arm64</span>
-        <span class="ph">Direct link goes in when the first release ships</span>
+        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.0/morsel-v1.0.0-macos-arm64.dmg">Download .dmg</a>
+        <span class="meta">v1.0.0 · signed &amp; notarized</span>
       </div>
       <div class="dlcard">
         <b>macOS</b>
         <span class="arch">Intel · x86_64</span>
-        <span class="ph">Direct link goes in when the first release ships</span>
+        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.0/morsel-v1.0.0-macos-x86_64.dmg">Download .dmg</a>
+        <span class="meta">v1.0.0 · signed &amp; notarized</span>
       </div>
       <div class="dlcard">
         <b>Windows</b>
         <span class="arch">x64</span>
-        <span class="ph">Direct link goes in when the first release ships</span>
+        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.0/morsel-v1.0.0-windows-x64.zip">Download .zip</a>
+        <span class="meta">v1.0.0 · unsigned</span>
       </div>
     </div>
     <p class="fineprint">
-      One package holds the command line, the desktop app and the web service, sharing a single set
-      of dependencies. Developers can install from source instead — see the
+      One package holds the command line, the desktop app, the web service and the MCP server, sharing a single set
+      of dependencies. Developers can <code>pip install aimorsel</code> or install from source instead — see the
       <a href="download/index.html">download page</a>.
     </p>
   </section>

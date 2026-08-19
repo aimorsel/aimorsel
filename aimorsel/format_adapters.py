@@ -26,7 +26,7 @@ import re
 from collections import Counter
 from pathlib import Path
 
-from i18n import tr
+from .i18n import tr
 
 # 交给本模块解析的办公文档格式
 OFFICE_EXTENSIONS = {".docx", ".xlsx", ".pptx"}

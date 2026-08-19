@@ -19,7 +19,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # 仓库根
 os.environ.setdefault("MORSEL_LANG", "zh")
 
-import morsel_gui
+from aimorsel import morsel_gui
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else "gui.png"
 

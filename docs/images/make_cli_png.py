@@ -7,6 +7,7 @@
 用法：
     morsel 报告.pdf report.pdf -f markdown,json --rag-chunks > out.txt 2>&1
     python docs/images/make_cli_png.py out.txt docs/images/cli.png --title "AImorsel — 批量转换"
+英文版：MORSEL_LANG=en 跑 morsel 得到英文输出，再 --title "AImorsel — batch conversion" 渲染成 cli-en.png。
 """
 from __future__ import annotations
 
@@ -25,8 +26,8 @@ SCALE = 2                      # 2x 出图，README 里按一半宽度显示，�
 # 上色规则：路径/产物蓝、成功绿、提示黄。只认这几类，别把整行涂花
 PATTERNS = [
     (re.compile(r"(output/[^\s，。]*|http://[^\s]+)"), BLUE),
-    (re.compile(r"(✓|成功 \d+ 个)"), GREEN),
-    (re.compile(r"(RAG 分块（[^）]*）|已启用：)"), YELLOW),
+    (re.compile(r"(✓|成功 \d+ 个|\d+ succeeded)"), GREEN),
+    (re.compile(r"(RAG 分块（[^）]*）|已启用：|RAG chunks \([^)]*\)|Enabled: )"), YELLOW),
 ]
 
 

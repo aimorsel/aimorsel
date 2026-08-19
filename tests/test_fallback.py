@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-import morsel
+from aimorsel import morsel
 
 
 @pytest.fixture()

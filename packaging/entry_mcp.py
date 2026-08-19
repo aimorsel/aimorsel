@@ -9,6 +9,6 @@ from _bundled_jre import use_bundled_jre
 
 use_bundled_jre()
 
-from morsel_mcp import main
+from aimorsel.morsel_mcp import main
 
 sys.exit(main())

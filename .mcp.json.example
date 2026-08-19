@@ -1,10 +1,8 @@
 {
   "mcpServers": {
     "aimorsel": {
-      "command": "python3",
-      "args": [
-        "morsel_mcp.py"
-      ]
+      "command": "morsel",
+      "args": ["mcp"]
     }
   }
 }

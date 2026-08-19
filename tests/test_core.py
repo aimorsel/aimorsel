@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import morsel
+from aimorsel import morsel
 
 
 def test_parse_pages_spec():
@@ -346,12 +346,12 @@ def test_dispatch_subcommand(monkeypatch, tmp_path: Path):
     import types
 
     seen: list = []
-    fake_web = types.ModuleType("morsel_web")
+    fake_web = types.ModuleType("aimorsel.morsel_web")
     fake_web.main = lambda argv: seen.append(argv) or 7
-    fake_gui = types.ModuleType("morsel_gui")
+    fake_gui = types.ModuleType("aimorsel.morsel_gui")
     fake_gui.main = lambda: 5
-    monkeypatch.setitem(sys.modules, "morsel_web", fake_web)
-    monkeypatch.setitem(sys.modules, "morsel_gui", fake_gui)
+    monkeypatch.setitem(sys.modules, "aimorsel.morsel_web", fake_web)
+    monkeypatch.setitem(sys.modules, "aimorsel.morsel_gui", fake_gui)
 
     assert morsel._dispatch_subcommand([]) is None            # 没参数 = 交互模式
     assert morsel._dispatch_subcommand(["a.pdf"]) is None     # 普通输入

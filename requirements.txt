@@ -1,3 +1,5 @@
+# 依赖的权威来源是 pyproject.toml（pip install "aimorsel[all]" / pip install -e ".[all,dev]"）。
+# 本文件保留给 PyInstaller 构建环境与旧脚本：内容 = 核心依赖 + 全部 extras。
 # 核心转换引擎（内置 Java CLI，需要系统已装 Java 11+）
 opendataloader-pdf>=2.5.0
 

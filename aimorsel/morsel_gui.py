@@ -19,8 +19,8 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
-from i18n import tr
-from morsel import (
+from .i18n import tr
+from .morsel import (
     DEFAULT_CHUNK_TOKENS,
     DEFAULT_HYBRID_URL,
     DEFAULT_INPUT_DIR,
@@ -510,7 +510,7 @@ class ConverterApp:
     # ---------------------------------------------------------------- OCR 一键安装
 
     def _refresh_ocr_status(self) -> None:
-        import ocr_setup
+        from . import ocr_setup
 
         try:
             self.ocr_status_label.config(text=ocr_setup.status_text())
@@ -519,7 +519,7 @@ class ConverterApp:
 
     def _setup_ocr(self) -> None:
         """后台线程跑「安装 + 启动」，进度打进日志区。转换与它互不阻塞。"""
-        import ocr_setup
+        from . import ocr_setup
 
         self.ocr_setup_btn.config(state="disabled")
         self._log(ocr_setup.status_text())

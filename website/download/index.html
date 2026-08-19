@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>下载 — AImorsel 文粒</title>
-<meta name="description" content="AImorsel 桌面版下载：macOS（Apple Silicon / Intel）与 Windows。包内自带精简 Java 运行时，解压即用。也可以从源码安装。" />
+<meta name="description" content="AImorsel 桌面版下载：macOS（Apple Silicon / Intel）与 Windows。包内自带精简 Java 运行时，解压即用。也可以 pip 安装或从源码安装。" />
 <link rel="canonical" href="https://aimorsel.dev/download/" />
 <link rel="alternate" hreflang="zh-Hans" href="https://aimorsel.dev/download/" />
 <link rel="alternate" hreflang="en" href="https://aimorsel.dev/en/download/" />
@@ -43,22 +43,25 @@
       <div class="dlcard">
         <b>macOS</b>
         <span class="arch">Apple Silicon · arm64</span>
-        <span class="ph">下载直链待首个正式版发布后填入</span>
+        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.0/morsel-v1.0.0-macos-arm64.dmg">下载 .dmg</a>
+        <span class="meta">v1.0.0 · 已签名并公证</span>
       </div>
       <div class="dlcard">
         <b>macOS</b>
         <span class="arch">Intel · x86_64</span>
-        <span class="ph">下载直链待首个正式版发布后填入</span>
+        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.0/morsel-v1.0.0-macos-x86_64.dmg">下载 .dmg</a>
+        <span class="meta">v1.0.0 · 已签名并公证</span>
       </div>
       <div class="dlcard">
         <b>Windows</b>
         <span class="arch">x64</span>
-        <span class="ph">下载直链待首个正式版发布后填入</span>
+        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.0/morsel-v1.0.0-windows-x64.zip">下载 .zip</a>
+        <span class="meta">v1.0.0 · 未签名</span>
       </div>
     </div>
     <p class="callout callout--gap">
-      〔占位〕首次运行时系统会怎么提示、需不需要手动放行——这一段等首个正式版实际发布后，
-      按当时的真实情况写，现在不写。
+      <strong>首次运行。</strong>macOS 包已用 Developer ID 签名并经 Apple 公证，双击直接打开，不会被拦。
+      Windows 包未签名，第一次运行 SmartScreen 会提示一次：点「更多信息」→「仍要运行」即可，之后不再提示。
     </p>
   </section>
 
@@ -66,7 +69,7 @@
     <div>
       <h2 class="h2">包里有什么</h2>
       <dl class="kv">
-        <div><dt>三个程序</dt><dd>命令行、图形界面、Web 常驻服务，共用同一份依赖</dd></div>
+        <div><dt>四个程序</dt><dd>命令行、图形界面、Web 常驻服务、MCP Server，共用同一份依赖</dd></div>
         <div><dt>Java 运行时</dt><dd>用 jlink 裁过的精简运行时，只带用得到的模块</dd></div>
         <div><dt>工作目录</dt><dd><code>raw/</code>（放待转文件）、<code>output/</code>（产物）、<code>config.toml</code>（默认参数）都在可执行文件旁边</dd></div>
         <div><dt>不含</dt><dd>OCR 服务。它依赖较重（几个 GB），按需单独装，见下</dd></div>
@@ -74,14 +77,22 @@
     </div>
 
     <div>
-      <h2 class="h2">从源码安装</h2>
+      <h2 class="h2">用 pip 安装</h2>
       <p class="body-text">需要 Python 3.10 或更高、Java 11 或更高。Java 是必需的——真正做版面分析的引擎是 Java 写的。</p>
+<pre class="code"><span class="p">$</span> pip install "aimorsel[all]"   <span class="c"># [all] = docx/xlsx/pptx/图片输入 + GUI 拖拽 + 坏 PDF 修复</span>
+<span class="p">$</span> java -version                 <span class="c"># 确认 Java 在</span>
+<span class="p">$</span> morsel --version</pre>
+      <p class="body-text">
+        包名是 <code>aimorsel</code>（<a href="https://pypi.org/project/aimorsel/">PyPI</a>）；<code>pip install morsel</code> 是它的别名，装到的是同一个包。
+        装完就有 <code>morsel</code> 命令，<code>morsel gui</code> / <code>morsel web</code> / <code>morsel mcp</code> 起另外三个程序。
+      </p>
+      <h2 class="h2">从源码安装</h2>
 <pre class="code"><span class="p">$</span> git clone https://github.com/aimorsel/aimorsel.git
 <span class="p">$</span> cd aimorsel
-<span class="p">$</span> pip install -r requirements.txt
-<span class="p">$</span> java -version   <span class="c"># 确认 Java 在</span></pre>
+<span class="p">$</span> pip install -e ".[all]"
+<span class="p">$</span> morsel --version</pre>
       <p class="body-text">
-        除核心引擎外的依赖都是可选的：缺哪个只影响对应功能，报错里会直接给出安装命令。
+        必装的只有核心引擎和兜底网，其余都是可选 extras：缺哪个只影响对应功能，报错里会直接给出安装命令。
         HTML 输入用标准库解析，不需要额外装东西。
       </p>
     </div>

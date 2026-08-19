@@ -1,0 +1,66 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aimorsel"
+dynamic = ["version"]
+description = "AImorsel — local-first document feeder for AI: PDF / docx / xlsx / pptx / HTML / images → structured Markdown / JSON, with RAG chunks, table CSV, quality check and an MCP server. Fully offline."
+readme = "README.en.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "AImorsel" }]
+keywords = ["pdf", "docx", "markdown", "json", "rag", "mcp", "ocr", "document", "converter", "offline", "llm"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Text Processing :: Markup :: Markdown",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Office/Business",
+]
+# 核心：版面分析引擎（自带 JAR，需系统 Java 11+）+ 兜底网（引擎失败时的降级转换与毫秒级扫描件探测）
+dependencies = [
+    "opendataloader-pdf>=2.5.0",
+    "pdfplumber>=0.11.0",
+]
+
+[project.optional-dependencies]
+gui = ["tkinterdnd2>=0.4.0"]                                       # 桌面界面的拖拽（不装也能用 GUI，只是没有拖拽）
+office = ["python-docx>=1.1.0", "openpyxl>=3.1.0", "python-pptx>=1.0.0"]  # docx / xlsx / pptx 输入
+images = ["pillow>=10.0.0"]                                         # 图片输入（包装成 PDF 走 OCR 通道）+ 倾斜校正
+repair = ["pikepdf>=8.0.0"]                                         # 结构损坏 / 截断 PDF 先修复再转换
+all = ["aimorsel[gui,office,images,repair]"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+morsel = "aimorsel.morsel:main"
+morsel-gui = "aimorsel.morsel_gui:main"
+morsel-web = "aimorsel.morsel_web:main"
+morsel-mcp = "aimorsel.morsel_mcp:main"
+
+[project.urls]
+Homepage = "https://aimorsel.dev"
+Documentation = "https://aimorsel.dev/en/docs/"
+Repository = "https://github.com/aimorsel/aimorsel"
+Issues = "https://github.com/aimorsel/aimorsel/issues"
+Changelog = "https://github.com/aimorsel/aimorsel/blob/main/CHANGELOG.md"
+
+[tool.hatch.version]
+path = "aimorsel/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["aimorsel"]
+
+# only-include 是锚定到根的路径；用 include = ["aimorsel/"] 会按 gitignore 语义匹配到 bench/results/out/aimorsel/…（186 MB 进 sdist，踩过）
+[tool.hatch.build.targets.sdist]
+only-include = ["aimorsel", "README.md", "README.en.md", "LICENSE", "CHANGELOG.md", "config.toml"]

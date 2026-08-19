@@ -2,7 +2,7 @@
 """轻量界面多语言：中文原文就是 key，英文在 `_EN` 字典里。
 
 用法：
-    from i18n import tr
+    from .i18n import tr
     print(tr("开始转换 {n} 个文件", n=3))
 
 设计取舍（改代码前先读）：
@@ -56,6 +56,11 @@ def tr(text: str, **kwargs) -> str:
     if current_lang() == "en":
         text = _EN.get(text, text)
     return text.format(**kwargs) if kwargs else text
+
+
+def note_sep() -> str:
+    """多条 note 拼接用的分隔符：中文全角「；」，英文「; 」。"""
+    return "; " if current_lang() == "en" else "；"
 
 
 # ---------------------------------------------------------------- 英文文案表

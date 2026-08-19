@@ -122,9 +122,9 @@
           开了质量自检，它还会把识别结果标回原文——哪里认错了，你自己能看见。
         </p>
         <div class="legend">
-          <span><i style="border-color:var(--accent)"></i>标题</span>
-          <span><i style="border-color:var(--ok)"></i>正文与表格</span>
-          <span><i style="border-color:var(--warn);border-style:dashed"></i>建议复核</span>
+          <span><i class="legend__h"></i>标题</span>
+          <span><i class="legend__b"></i>正文与表格</span>
+          <span><i class="legend__w"></i>建议复核</span>
         </div>
         <p class="split__note">
           这三个颜色不是设计师挑的，就是质量自检生成的标注版 PDF 用的颜色。
@@ -290,22 +290,25 @@
       <div class="dlcard">
         <b>macOS</b>
         <span class="arch">Apple Silicon · arm64</span>
-        <span class="ph">下载直链待首个正式版发布后填入</span>
+        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.0/morsel-v1.0.0-macos-arm64.dmg">下载 .dmg</a>
+        <span class="meta">v1.0.0 · 已签名并公证</span>
       </div>
       <div class="dlcard">
         <b>macOS</b>
         <span class="arch">Intel · x86_64</span>
-        <span class="ph">下载直链待首个正式版发布后填入</span>
+        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.0/morsel-v1.0.0-macos-x86_64.dmg">下载 .dmg</a>
+        <span class="meta">v1.0.0 · 已签名并公证</span>
       </div>
       <div class="dlcard">
         <b>Windows</b>
         <span class="arch">x64</span>
-        <span class="ph">下载直链待首个正式版发布后填入</span>
+        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.0/morsel-v1.0.0-windows-x64.zip">下载 .zip</a>
+        <span class="meta">v1.0.0 · 未签名</span>
       </div>
     </div>
     <p class="fineprint">
-      一个包里含命令行、图形界面、Web 服务三个程序，共用同一份依赖。
-      开发者也可以从源码装：见 <a href="download/index.html">下载页</a>。
+      一个包里含命令行、图形界面、Web 服务、MCP Server 四个程序，共用同一份依赖。
+      开发者也可以 <code>pip install aimorsel</code> 或从源码装：见 <a href="download/index.html">下载页</a>。
     </p>
   </section>
 

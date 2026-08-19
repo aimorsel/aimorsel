@@ -5,6 +5,6 @@ from _bundled_jre import use_bundled_jre
 
 use_bundled_jre()
 
-from morsel_gui import main
+from aimorsel.morsel_gui import main
 
 sys.exit(main())

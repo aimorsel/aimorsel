@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import format_adapters as fa
+from aimorsel import format_adapters as fa
 
 
 def test_docx_tree(sample_docx):
@@ -182,7 +182,7 @@ def test_html_title_fallback_and_encoding(tmp_path):
 
 
 def test_html_extensions_routed():
-    import morsel
+    from aimorsel import morsel
     from pathlib import Path
 
     for ext in (".html", ".htm", ".xhtml"):

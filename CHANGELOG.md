@@ -4,6 +4,28 @@ All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); versions follow
 [SemVer](https://semver.org/). 中英文混排：条目以英文为主，必要处附中文。
 
+## [1.0.1] - 2026-08-19
+
+### Added
+- **PyPI package**: `pip install "aimorsel[all]"` (the `morsel` name on PyPI is an alias
+  that installs the same thing). Console scripts `morsel` / `morsel-gui` / `morsel-web` /
+  `morsel-mcp`, plus `python -m aimorsel`; `morsel --version`.
+  The JRE is not bundled in the pip package — Java 11+ must be on the system.
+- README badges (CI / release / license / website) and a Chinese MCP section
+
+### Changed
+- **Source moved into the `aimorsel/` package** (`aimorsel/morsel.py`, `aimorsel/morsel_gui.py`, …);
+  the flat top-level modules (`morsel.py`, `i18n.py`, `format_adapters.py`, …) no longer exist,
+  so nothing pollutes the top-level namespace when pip-installed. Running from a checkout is
+  `pip install -e ".[all,dev]"` then `morsel` (or `python -m aimorsel`).
+- `raw/` `output/` `config.toml` location: packaged build → next to the executable; source
+  checkout → repository root; pip install → **current working directory** (never site-packages).
+- Website: v1.0.0 download links, first-launch guidance, legend swatches without inline styles
+
+### Fixed
+- English output joined multiple notes with the Chinese full-width "；"; the separator now
+  follows the UI language ("; " in English).
+
 ## [1.0.0] - 2026-08-19
 
 First public release. 首个公开发布版本。

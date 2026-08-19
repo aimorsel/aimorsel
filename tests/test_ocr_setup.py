@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-import ocr_setup
+from aimorsel import ocr_setup
 
 
 @pytest.fixture()
