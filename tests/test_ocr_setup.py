@@ -153,13 +153,14 @@ def test_server_command_survives_moved_venv(sandbox):
     _fake_install(sandbox)
     assert ocr_setup.is_installed()                     # 判据不看 console script
     cmd = ocr_setup.server_command(5099, "de,en")
-    assert cmd[0].endswith("opendataloader-pdf-hybrid")  # shebang 完好时照旧用它
+    # 用 stem 比，别用 endswith：Windows 上 _env_bin 会加 .exe，CI 上三次全红都栽在这
+    assert Path(cmd[0]).stem == "opendataloader-pdf-hybrid"  # shebang 完好时照旧用它
 
     exe = ocr_setup._env_bin("opendataloader-pdf-hybrid")
     exe.write_text("#!/nonexistent/old-home/ocr-env/bin/python\n")   # 模拟搬家后的断链
     assert not ocr_setup._shebang_ok(exe)
     cmd = ocr_setup.server_command(5099, "de,en")
-    assert cmd[0].endswith("python") and cmd[1] == "-c"
+    assert Path(cmd[0]).stem == "python" and cmd[1] == "-c"
     assert ocr_setup.HYBRID_ENTRY in cmd[2]
     assert cmd[-4:] == ["--port", "5099", "--ocr-lang", "de,en"]
 
