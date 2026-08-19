@@ -241,38 +241,44 @@
       <h2>数字都在仓库里，每一行都能自己复算</h2>
       <p>731 份公开语料 × 5 个引擎 = 3224 条记录。真值直接从源文件解析（arXiv 的 LaTeX 源码、法规的 HTML 版、合成件的已知结构），不是人打分，也不用大模型当裁判。</p>
     </div>
-    <div class="tablewrap">
-      <table>
-        <thead>
-          <tr>
-            <th>引擎</th>
-            <th>能吃的输入</th>
-            <th>731 份里转成功</th>
-            <th>文本相似（双方都成功的文档上，对手 / 我们）</th>
-            <th>中位耗时</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><th>AImorsel</th><td>全部 8 类格式</td><td>731（100%）</td><td>—</td><td>1.6 秒/份</td></tr>
-          <tr><th>docling</th><td>与我们相当</td><td>299 / 300（分层子集）</td><td>0.841 / 0.839</td><td>11.2 秒/份</td></tr>
-          <tr><th>pymupdf4llm</th><td>只吃 PDF</td><td>293（40%）</td><td>0.775 / 0.773</td><td>7.2 秒/份</td></tr>
-          <tr><th>markitdown</th><td>除图片与扫描件外的多数格式</td><td>539（74%）</td><td>0.715 / 0.842</td><td>0.8 秒/份</td></tr>
-          <tr><th>pdfplumber</th><td>只吃 PDF，纯文本</td><td>289（40%）</td><td>0.574 / 0.778</td><td>0.5 秒/份</td></tr>
-        </tbody>
-      </table>
+    <div class="charts">
+      <figure class="chart">
+        <figcaption class="chart__t"><b>覆盖</b><span>731 份混装语料里转成功的份数</span></figcaption>
+        <div class="bars">
+        <div class="bars__row bars__row--us"><span class="bars__l">AImorsel</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="100.0" height="10"/></svg><span class="bars__v">731 · 100%</span></div>
+        <div class="bars__row"><span class="bars__l">markitdown</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="73.7" height="10"/></svg><span class="bars__v">539 · 74%</span></div>
+        <div class="bars__row"><span class="bars__l">pymupdf4llm</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="40.1" height="10"/></svg><span class="bars__v">293 · 40%</span></div>
+        <div class="bars__row"><span class="bars__l">pdfplumber</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="39.5" height="10"/></svg><span class="bars__v">289 · 40%</span></div>
+        </div>
+      </figure>
+      <figure class="chart">
+        <figcaption class="chart__t"><b>文本保真</b><span>逐对比较，只算双方都成功的文档</span></figcaption>
+        <div class="bars">
+        <div class="bars__row"><span class="bars__l">docling<small>n=299</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="84.1" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="83.9" height="10"/></svg></span><span class="bars__v">0.841 / <b>0.839</b></span></div>
+        <div class="bars__row"><span class="bars__l">pymupdf4llm<small>n=293</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="77.5" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="77.3" height="10"/></svg></span><span class="bars__v">0.775 / <b>0.773</b></span></div>
+        <div class="bars__row"><span class="bars__l">markitdown<small>n=539</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="71.5" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="84.2" height="10"/></svg></span><span class="bars__v">0.715 / <b>0.842</b></span></div>
+        <div class="bars__row"><span class="bars__l">pdfplumber<small>n=289</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="57.4" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="77.8" height="10"/></svg></span><span class="bars__v">0.574 / <b>0.778</b></span></div>
+        </div>
+        <p class="chart__legend"><span><i></i>对手</span><span><i class="us"></i>AImorsel</span></p>
+      </figure>
+      <figure class="chart">
+        <figcaption class="chart__t"><b>中位耗时</b><span>秒 / 份，越短越好</span></figcaption>
+        <div class="bars">
+        <div class="bars__row"><span class="bars__l">pdfplumber</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="4.5" height="10"/></svg><span class="bars__v">0.5 s</span></div>
+        <div class="bars__row"><span class="bars__l">markitdown</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="7.1" height="10"/></svg><span class="bars__v">0.8 s</span></div>
+        <div class="bars__row bars__row--us"><span class="bars__l">AImorsel</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="14.3" height="10"/></svg><span class="bars__v">1.6 s</span></div>
+        <div class="bars__row"><span class="bars__l">pymupdf4llm</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="64.3" height="10"/></svg><span class="bars__v">7.2 s</span></div>
+        <div class="bars__row"><span class="bars__l">docling</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="100.0" height="10"/></svg><span class="bars__v">11.2 s</span></div>
+        </div>
+      </figure>
     </div>
-    <p class="fineprint">
-      不支持的格式按失败计——这一列衡量的是「一个混装文件夹丢进去，多少份能出东西」。
-      与 docling、pymupdf4llm 的文本保真度基本持平，耗时差一个数量级（docling 峰值内存 p95 2.0 GB，我们 620 MB）。
-      另有一项静默事故只有我们和 docling 没犯：markitdown 与 pdfplumber 把 10 份阿拉伯语文档按视觉序输出，
-      字一个不少，但检索和分词全部失效。
-    </p>
+    <ul class="notes">
+      <li>覆盖把不支持的格式按失败计，衡量的是「一个混装文件夹丢进去，多少份能出东西」。docling 约 11 秒一份，只跑了 300 份分层子集（成功 299），所以不进覆盖图。</li>
+      <li>与 docling、pymupdf4llm 保真持平，耗时少一个数量级；峰值内存 docling p95 2.0 GB，我们 620 MB。</li>
+      <li>markitdown 与 pdfplumber 把 10 份阿拉伯语文档按视觉序输出——字一个不少，检索和分词全部失效。我们与 docling 没犯。</li>
+    </ul>
     <p class="callout callout--gap">
-      <b>两处必须说清楚。</b>docling 约 11 秒一份，全量跑不完，只跑了 300 份分层子集，它那一行的份数与别人不同；
-      在 77 份「所有引擎都成功」的交集上，docling 与 pymupdf4llm 的文本相似度高于我们（0.92 / 0.92 对 0.82），
-      那份子集样本小且偏向标准单栏 PDF——结构指标在同一张表上是我们领先。两张表都在结果页里。
-      最弱的一环是扫描件与图片：数字保真在有文字层的文档上是 0.891，走 OCR 通道只有 0.716，
-      扫描件里的数字适合检索定位，不能直接进表格。
+      <b>两处得说清楚。</b>在 77 份「五个引擎全成功」的小交集上，docling 与 pymupdf4llm 的文本相似度高于我们（0.92 对 0.82）——样本偏标准单栏 PDF，结构指标仍是我们领先。最弱一环是扫描件与图片：数字保真只有 0.716（有文字层 0.891），扫描件里的数字只适合检索定位，别直接进表格。
     </p>
     <p class="fineprint">
       <a href="https://github.com/aimorsel/aimorsel/blob/main/bench/RESULTS.md">完整结果表与口径说明 →</a>

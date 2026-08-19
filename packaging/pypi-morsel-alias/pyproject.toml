@@ -6,14 +6,14 @@ build-backend = "hatchling.build"
 
 [project]
 name = "morsel"
-version = "1.0.1"
-description = "Alias of the `aimorsel` package — the `morsel` CLI of AImorsel, a local-first document feeder for AI (PDF/Office/HTML/images → Markdown/JSON). Installs aimorsel."
+version = "1.0.2"
+description = "Alias of aimorsel — local document extraction for LLMs and search. Installs the aimorsel package."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
 authors = [{ name = "AImorsel" }]
 keywords = ["pdf", "markdown", "ai", "rag", "mcp", "document", "converter"]
-dependencies = ["aimorsel>=1.0.1"]
+dependencies = ["aimorsel>=1.0.2"]
 
 [project.urls]
 Homepage = "https://aimorsel.dev"

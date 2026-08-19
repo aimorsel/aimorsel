@@ -4,6 +4,14 @@ All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); versions follow
 [SemVer](https://semver.org/). 中英文混排：条目以英文为主，必要处附中文。
 
+## [1.0.2] - 2026-08-19
+
+### Changed
+- PyPI page: shorter summary ("Local document extraction for LLMs and search"); README images and
+  relative links are rewritten to absolute GitHub URLs at build time (`hatch_build.py`), so they render on PyPI.
+- Website: the benchmark section now shows three bar charts (coverage / pairwise text fidelity / median time)
+  instead of a table, with shorter notes.
+
 ## [1.0.1] - 2026-08-19
 
 ### Added

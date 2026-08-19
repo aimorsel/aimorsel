@@ -246,46 +246,48 @@
       <h2>The numbers are in the repo, and you can recompute every row</h2>
       <p>731 public documents × 5 engines = 3,224 records. Ground truth is parsed from the source files themselves (arXiv LaTeX sources, the HTML editions of statutes, the known structure of generated files) — no human scoring, no LLM as judge.</p>
     </div>
-    <div class="tablewrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Engine</th>
-            <th>Accepts</th>
-            <th>Converted out of 731</th>
-            <th>Text similarity (docs both converted, them / us)</th>
-            <th>Median time</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><th>AImorsel</th><td>all 8 format classes</td><td>731 (100%)</td><td>—</td><td>1.6 s/doc</td></tr>
-          <tr><th>docling</th><td>comparable to ours</td><td>299 / 300 (stratified subset)</td><td>0.841 / 0.839</td><td>11.2 s/doc</td></tr>
-          <tr><th>pymupdf4llm</th><td>PDF only</td><td>293 (40%)</td><td>0.775 / 0.773</td><td>7.2 s/doc</td></tr>
-          <tr><th>markitdown</th><td>most formats except images and scans</td><td>539 (74%)</td><td>0.715 / 0.842</td><td>0.8 s/doc</td></tr>
-          <tr><th>pdfplumber</th><td>PDF only, plain text</td><td>289 (40%)</td><td>0.574 / 0.778</td><td>0.5 s/doc</td></tr>
-        </tbody>
-      </table>
+    <div class="charts">
+      <figure class="chart">
+        <figcaption class="chart__t"><b>Coverage</b><span>Files converted out of the 731-file mixed corpus</span></figcaption>
+        <div class="bars">
+        <div class="bars__row bars__row--us"><span class="bars__l">AImorsel</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="100.0" height="10"/></svg><span class="bars__v">731 · 100%</span></div>
+        <div class="bars__row"><span class="bars__l">markitdown</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="73.7" height="10"/></svg><span class="bars__v">539 · 74%</span></div>
+        <div class="bars__row"><span class="bars__l">pymupdf4llm</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="40.1" height="10"/></svg><span class="bars__v">293 · 40%</span></div>
+        <div class="bars__row"><span class="bars__l">pdfplumber</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="39.5" height="10"/></svg><span class="bars__v">289 · 40%</span></div>
+        </div>
+      </figure>
+      <figure class="chart">
+        <figcaption class="chart__t"><b>Text fidelity</b><span>Pairwise, on documents both engines succeeded on</span></figcaption>
+        <div class="bars">
+        <div class="bars__row"><span class="bars__l">docling<small>n=299</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="84.1" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="83.9" height="10"/></svg></span><span class="bars__v">0.841 / <b>0.839</b></span></div>
+        <div class="bars__row"><span class="bars__l">pymupdf4llm<small>n=293</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="77.5" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="77.3" height="10"/></svg></span><span class="bars__v">0.775 / <b>0.773</b></span></div>
+        <div class="bars__row"><span class="bars__l">markitdown<small>n=539</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="71.5" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="84.2" height="10"/></svg></span><span class="bars__v">0.715 / <b>0.842</b></span></div>
+        <div class="bars__row"><span class="bars__l">pdfplumber<small>n=289</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="57.4" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="77.8" height="10"/></svg></span><span class="bars__v">0.574 / <b>0.778</b></span></div>
+        </div>
+        <p class="chart__legend"><span><i></i>Other engine</span><span><i class="us"></i>AImorsel</span></p>
+      </figure>
+      <figure class="chart">
+        <figcaption class="chart__t"><b>Median time</b><span>Seconds per file, shorter is better</span></figcaption>
+        <div class="bars">
+        <div class="bars__row"><span class="bars__l">pdfplumber</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="4.5" height="10"/></svg><span class="bars__v">0.5 s</span></div>
+        <div class="bars__row"><span class="bars__l">markitdown</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="7.1" height="10"/></svg><span class="bars__v">0.8 s</span></div>
+        <div class="bars__row bars__row--us"><span class="bars__l">AImorsel</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="14.3" height="10"/></svg><span class="bars__v">1.6 s</span></div>
+        <div class="bars__row"><span class="bars__l">pymupdf4llm</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="64.3" height="10"/></svg><span class="bars__v">7.2 s</span></div>
+        <div class="bars__row"><span class="bars__l">docling</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="100.0" height="10"/></svg><span class="bars__v">11.2 s</span></div>
+        </div>
+      </figure>
     </div>
-    <p class="fineprint">
-      Unsupported formats count as failures — that column answers “drop a mixed folder in, how much comes out”.
-      Text fidelity is a tie with docling and pymupdf4llm; runtime differs by an order of magnitude
-      (docling peaks at 2.0 GB p95, we peak at 620 MB). One silent failure only we and docling avoid:
-      markitdown and pdfplumber emit ten Arabic documents in visual order — every character present,
-      but search and tokenization broken.
-    </p>
+    <ul class="notes">
+      <li>Coverage counts unsupported formats as failures — it measures “drop a mixed folder in, how many come out”. docling takes about 11 s per file, so it only ran a 300-file stratified subset (299 succeeded) and is left out of the coverage chart.</li>
+      <li>Fidelity is on par with docling and pymupdf4llm at a tenth of the time; peak memory p95 is 2.0 GB for docling, 620 MB for us.</li>
+      <li>markitdown and pdfplumber emit 10 Arabic documents in visual order — not a character missing, yet search and tokenization are broken. We and docling don't.</li>
+    </ul>
     <p class="callout callout--gap">
-      <b>Two things have to be said plainly.</b> docling takes ~11 s per document, too slow for the full run,
-      so it only covers a 300-document stratified subset and its row is not a like-for-like count.
-      And on the 77 documents <em>every</em> engine converted, docling and pymupdf4llm beat us on text similarity
-      (0.92 / 0.92 against 0.82) — that subset is small and skewed toward plain single-column PDFs, and we lead
-      on the structure metrics in that same table. Both tables are published. Our weakest link is scans and images:
-      digit fidelity is 0.891 on documents with a text layer but 0.716 through the OCR channel, so numbers read
-      off a scan are good for locating a figure, never for putting straight into a spreadsheet.
+      <b>Two things need saying.</b> On the small 77-file intersection where all five engines succeed, docling and pymupdf4llm score higher than us on text similarity (0.92 vs 0.82) — a sample skewed towards standard single-column PDFs; we still lead on structure there. Our weakest link is scans and images: digit fidelity is 0.716 (0.891 with a text layer), so numbers from scans are fine for locating, not for copying into a table.
     </p>
     <p class="fineprint">
-      <a href="https://github.com/aimorsel/aimorsel/blob/main/bench/RESULTS.md">Full result tables and reading caveats →</a>
-      The corpus manifest, download scripts, ground-truth generators, metric implementations and batch runner
-      all live in <code>bench/</code>; rerunning the same manifest reproduces the numbers within 1%.
+      <a href="https://github.com/aimorsel/aimorsel/blob/main/bench/RESULTS.md">Full result tables and methodology →</a>
+      Corpus list, download scripts, ground-truth generators, metric implementations and batch runners all live in <code>bench/</code>; re-running the same manifest reproduces the numbers within 1%.
     </p>
   </section>
 

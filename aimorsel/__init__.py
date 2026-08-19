@@ -11,4 +11,4 @@
     ocr_setup         OCR 服务一键安装/启动
 """
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"

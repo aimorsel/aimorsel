@@ -4,9 +4,9 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aimorsel"
-dynamic = ["version"]
-description = "AImorsel — local-first document feeder for AI: PDF / docx / xlsx / pptx / HTML / images → structured Markdown / JSON, with RAG chunks, table CSV, quality check and an MCP server. Fully offline."
-readme = "README.en.md"
+dynamic = ["version", "readme"]
+description = "Local document extraction for LLMs and search: PDF / docx / xlsx / pptx / HTML / images → Markdown / JSON, fully offline."
+# readme 由 hatch_build.py 的元数据钩子提供（README.en.md 相对链接改写成 GitHub 绝对地址）
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
 authors = [{ name = "AImorsel" }]
@@ -55,6 +55,9 @@ Repository = "https://github.com/aimorsel/aimorsel"
 Issues = "https://github.com/aimorsel/aimorsel/issues"
 Changelog = "https://github.com/aimorsel/aimorsel/blob/main/CHANGELOG.md"
 
+[tool.hatch.metadata.hooks.custom]
+path = "hatch_build.py"
+
 [tool.hatch.version]
 path = "aimorsel/__init__.py"
 
@@ -63,4 +66,4 @@ packages = ["aimorsel"]
 
 # only-include 是锚定到根的路径；用 include = ["aimorsel/"] 会按 gitignore 语义匹配到 bench/results/out/aimorsel/…（186 MB 进 sdist，踩过）
 [tool.hatch.build.targets.sdist]
-only-include = ["aimorsel", "README.md", "README.en.md", "LICENSE", "CHANGELOG.md", "config.toml"]
+only-include = ["aimorsel", "hatch_build.py", "README.md", "README.en.md", "LICENSE", "CHANGELOG.md", "config.toml"]
