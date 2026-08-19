@@ -284,18 +284,39 @@ printf '%s' "XXXXXXXX"                            | gh secret set MACOS_NOTARY_K
 printf '%s' "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" | gh secret set MACOS_NOTARY_ISSUER
 ```
 
-`.p12` 密码别写进命令行（会进 shell 历史）。用静默读取：
+`.p12` 密码别写进命令行（会进 shell 历史）。而且**别盲输一次就写进去**——
+`read -rs` 无回显、无二次确认，敲错一个字符不会有任何提示，要等 CI 跑到
+`security import` 才以 `MAC verification failed` 的面目出现（2026-08-19 实测踩过，
+浪费了一整轮三平台构建）。**先验后写**，密码对不上就什么都不写：
 
 ```bash
-read -rs -p "p12 密码: " PW && printf '%s' "$PW" | gh secret set MACOS_CERT_PASSWORD && unset PW
+bash -c '
+P=~/.apple-developer-credentials/DeveloperID_Application_XXXXXXXXXX.p12
+read -rs -p "p12 密码: " PW; echo
+security create-keychain -p tmptest /tmp/t2.keychain >/dev/null
+if security import "$P" -k /tmp/t2.keychain -P "$PW" >/dev/null 2>&1; then
+  printf "%s" "$PW" | gh secret set MACOS_CERT_PASSWORD --repo <owner>/<repo> && echo "OK 已验证并写入"
+else
+  echo "密码不对，未写入任何东西"
+fi
+security delete-keychain /tmp/t2.keychain >/dev/null
+'
 ```
+
+用 `security import` 验证而不是 openssl，是因为它就是 CI 里的那行命令，
+**验的是同一条路径**（代价：密码会短暂出现在 `security` 的 argv 里，
+个人机可接受；多用户机器上换 expect 喂 stdin）。
+
+> **`read -rs -p` 是 bash 写法，zsh 里 `-p` 是读协程**（会报 `read: -p: no coprocess`）。
+> zsh 下写成 `read -rs "?p12 密码: " PW`，或像上面那样整段丢给 `bash -c`。
+
+> **别用 `openssl pkcs12 -in x.p12 -noout` 验密码。** 钥匙串导出的 `.p12` 用的是
+> 遗留的 RC2-40-CBC，OpenSSL 3 默认不带这个算法，**密码正确也会报**
+> `unsupported ... Algorithm (RC2-40-CBC : 0)` —— 会把好密码误判成坏密码。
+> 真要用 openssl 得加 `-legacy`。`security import` 没这个问题。
 
 `gh secret list` 只能看到名称和更新时间——**值写进去就再也读不出来**，
-所以本地那份备份不能丢。密码记不准时先验证再设（交互输入，不进历史）：
-
-```bash
-openssl pkcs12 -in DeveloperID_Application.p12 -noout   # 静默成功 = 密码正确
-```
+所以本地那份备份不能丢。
 
 runner 上导入证书的关键三步（**`set-key-partition-list` 千万别漏**，
 否则 codesign 会弹密码框、CI 直接挂到超时）：

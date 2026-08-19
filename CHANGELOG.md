@@ -4,7 +4,9 @@ All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); versions follow
 [SemVer](https://semver.org/). 中英文混排：条目以英文为主，必要处附中文。
 
-## [Unreleased]
+## [1.0.0] - 2026-08-19
+
+First public release. 首个公开发布版本。
 
 ### Added
 - Full interface i18n (Chinese/English): CLI, GUI, web UI and MCP tool
@@ -118,6 +120,16 @@ Batch 5 — leftovers from the pre-benchmark smoke run
   affected shape is a synthetic-corpus template (48 files, one occurrence each)
   and is rare in real documents, so this stays an upstream reading-order
   limitation — same call as the image/OCR row-order issue above
+- Deskew can fire on an image that is not tilted at all when the page holds
+  very little text — a single short line surrounded by white space is detected
+  as 1.5 degrees, and the needless resample costs OCR accuracy (`AIMORSEL` read
+  back as `HIMORSEL`; `--no-deskew` reads it correctly). Bounded by measurement
+  rather than guessed at: an 18-line page reports 0.00 degrees, the same page
+  rotated by 1.5 degrees reports 1.50, a text-free shape reports -0.10, and a
+  single *long* line reports 0.40 (below the 1.0 threshold, so nothing happens).
+  The projection method simply has too few text rows to lock onto. Left open
+  rather than patched in the release window, because the 1.0 threshold was
+  itself set by measurement and a guard needs the same treatment (see #6)
 
 ## [0.1.0] - 2026-07-25
 
