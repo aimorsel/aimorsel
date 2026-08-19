@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Getting started — AImorsel docs</title>
+<meta name="description" content="AImorsel getting started: install, your first conversion, common options, batch runs, AI-facing output (RAG chunks, table CSV, quality check) and OCR for scans." />
+<link rel="canonical" href="https://aimorsel.dev/en/docs/" />
+<link rel="alternate" hreflang="zh-Hans" href="https://aimorsel.dev/docs/" />
+<link rel="alternate" hreflang="en" href="https://aimorsel.dev/en/docs/" />
+<link rel="alternate" hreflang="x-default" href="https://aimorsel.dev/docs/" />
+<link rel="stylesheet" href="../../assets/site.css" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231F5FD0'/><rect x='7' y='9' width='18' height='3.5' rx='1.5' fill='white'/><rect x='7' y='15' width='13' height='2.5' rx='1.25' fill='white' opacity='.7'/><rect x='7' y='20' width='9' height='2.5' rx='1.25' fill='white' opacity='.45'/></svg>" />
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="nav">
+  <div class="wrap nav__in">
+    <a class="brand" href="../index.html"><span>AImorsel</span><span class="cn" lang="zh-Hans">文粒</span></a>
+    <div class="navlinks">
+      <a class="hide-sm" href="../index.html#structure">What it does</a>
+      <a class="hide-sm" href="../index.html#agent">For agents</a>
+      <a href="../download/index.html">Download</a>
+      <a href="index.html" aria-current="page">Docs</a>
+      <a href="https://github.com/aimorsel">GitHub</a>
+      <a class="lang" href="../../docs/index.html" lang="zh-Hans" hreflang="zh-Hans">中文</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap docs" id="main">
+
+  <aside class="docs__side">
+    <div class="docs__group">
+      <h4>Start</h4>
+      <a href="index.html" aria-current="page">Getting started</a>
+      <a href="../download/index.html">Install &amp; download</a>
+    </div>
+    <div class="docs__group">
+      <h4>For agents</h4>
+      <a href="mcp/index.html">MCP setup</a>
+    </div>
+    <div class="docs__group">
+      <h4>Elsewhere</h4>
+      <a href="https://github.com/aimorsel">GitHub repo</a>
+      <a href="../index.html">Back to home</a>
+    </div>
+  </aside>
+
+  <article class="docs__body">
+    <p class="docs__crumb">Docs / Getting started</p>
+    <h1>Getting started</h1>
+    <p>
+      Three ways to drive the same conversion: type a command, drag files onto the desktop app, or
+      leave a service running that watches a folder. Add MCP for agents and that's four entry points.
+    </p>
+
+    <h2 id="first">Your first conversion<a class="anchor" href="#first">#</a></h2>
+    <p>Put files in <code>raw/</code> and run it with no arguments — it lists what's there and lets you pick by number:</p>
+<pre class="code"><span class="p">$</span> morsel
+<span class="c"># or pass a path directly, or drag a file or folder into the terminal</span>
+<span class="p">$</span> morsel report.pdf
+<span class="p">$</span> morsel ~/Documents/contracts/</pre>
+    <p>
+      Results go to <code>output/&lt;filename&gt;/</code> — one folder per file, so same-named documents
+      don't overwrite each other and extracted images have somewhere to live.
+      Markdown and JSON are the default outputs.
+    </p>
+
+    <h2 id="formats">Input and output<a class="anchor" href="#formats">#</a></h2>
+    <div class="tablewrap tablewrap--narrow">
+      <table>
+        <thead><tr><th>Input</th><th>What a "page" means</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><th>.pdf</th><td>Physical page</td><td>The main path — fullest layout analysis: heading levels, tables, coordinates, font sizes</td></tr>
+          <tr><th>.docx</th><td>Whole file counts as page 1</td><td>Heading levels, lists and tables preserved</td></tr>
+          <tr><th>.xlsx</th><td>One sheet = one page</td><td>Reads the cached values of formulas</td></tr>
+          <tr><th>.pptx</th><td>One slide = one page</td><td>Speaker notes included</td></tr>
+          <tr><th>.html / .htm</th><td>Whole file counts as page 1</td><td>Parsed with the standard library, no extra dependency; scripts and styles dropped</td></tr>
+          <tr><th>Images</th><td>One frame = one page</td><td>png jpg tiff bmp webp gif; needs OCR to produce text</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="body-text">
+      Five output formats: <code>markdown</code>, <code>json</code>, <code>html</code>,
+      <code>text</code>, and <code>pdf</code> — that last one is an <strong>annotated PDF</strong>
+      that draws a coloured box around every block it recognised, so you can check the parse
+      against the original.
+    </p>
+<pre class="code"><span class="p">$</span> morsel report.pdf -f markdown,json,text
+<span class="p">$</span> morsel report.pdf --pages 1,3,5-7     <span class="c"># selected pages only</span>
+<span class="p">$</span> morsel locked.pdf -p PASSWORD</pre>
+
+    <h2 id="options">Common options<a class="anchor" href="#options">#</a></h2>
+    <dl class="kv">
+      <div><dt>--better-tables</dt><dd>Enhanced table detection. The default finds tables by their borders; borderless ones need this</dd></div>
+      <div><dt>--images</dt><dd><code>off</code> / <code>embedded</code> / <code>external</code> (default). External reliably writes image files</dd></div>
+      <div><dt>--page-markers</dt><dd>Insert page markers into Markdown and text so you can cite back to the page</dd></div>
+      <div><dt>--sanitize</dt><dd>Replace emails, phone numbers, ID numbers, card numbers and IPs with placeholders</dd></div>
+      <div><dt>--header-footer</dt><dd>Keep running heads and footers (dropped by default)</dd></div>
+      <div><dt>--keep-all-content</dt><dd>Turn off content filtering — recovers off-page and very small text when you suspect something is missing</dd></div>
+    </dl>
+    <p class="body-text">
+      Put the combinations you use often into <code>config.toml</code> at the project root.
+      The rule is simple: <strong>config only changes defaults; an explicit command-line flag always
+      wins</strong>. A key you got wrong is reported and ignored rather than fatal.
+    </p>
+
+    <h2 id="batch">Batches and long runs<a class="anchor" href="#batch">#</a></h2>
+<pre class="code"><span class="p">$</span> morsel ~/contracts/ --jobs 4         <span class="c"># four worker processes</span>
+<span class="p">$</span> morsel ~/contracts/ --force          <span class="c"># re-convert everything</span>
+<span class="p">$</span> morsel --watch ~/Dropbox/inbox       <span class="c"># watch a folder</span></pre>
+    <ul class="list">
+      <li><strong>Resume is on by default.</strong> Successful runs are recorded with the source
+        file's modification time, size and a signature of the options used. Change the file, the
+        output format or an option and it re-converts. The record is written after each file, so a
+        power cut costs you nothing already done.</li>
+      <li><strong>Failures aren't recorded</strong>, so they're retried on the next run.</li>
+      <li><strong>Every batch writes a <code>report.csv</code></strong>: status, pages, output count,
+        duration, whether OCR ran, and the reason for any failure. UTF-8 with BOM, so Excel opens it
+        without mangling non-ASCII text.</li>
+      <li><strong>Watch mode waits for files to settle</strong> — two consecutive scans with the same
+        size and timestamp — so it never converts a half-copied file. This matters on synced folders.</li>
+    </ul>
+
+    <h2 id="ai">AI-facing output<a class="anchor" href="#ai">#</a></h2>
+<pre class="code"><span class="p">$</span> morsel report.pdf --rag-chunks --chunk-size 400
+<span class="p">$</span> morsel report.pdf --export-tables
+<span class="p">$</span> morsel ~/research/ --merge
+<span class="p">$</span> morsel report.pdf --qa</pre>
+    <dl class="kv">
+      <div><dt>RAG chunks</dt><dd>Split by heading level within a token budget, written one chunk per line to <code>.chunks.jsonl</code>, each carrying its page range and heading path. Headings start new chunks, sections too small to stand alone merge forward, and long body text is split by line then by sentence</dd></div>
+      <div><dt>Table CSV</dt><dd>One CSV per table, page number in the filename; merged cells are written to their top-left anchor</dd></div>
+      <div><dt>Merge</dt><dd>Combines the batch's Markdown into a single <code>merged.md</code> with a clickable table of contents, one top-level heading per document</dd></div>
+      <div><dt>Quality check</dt><dd>Produces an annotated PDF (headings blue, body green) plus a per-page CSV flagging blank pages, scanned-looking pages and thin ones, and reports "N of M pages worth reviewing" in the log</dd></div>
+    </dl>
+    <p class="body-text">
+      Chunking and table export both read the JSON structure tree. If you didn't ask for JSON output,
+      it's generated anyway.
+    </p>
+
+    <h2 id="ocr">Scans and OCR<a class="anchor" href="#ocr">#</a></h2>
+    <p class="body-text">
+      OCR defaults to <code>auto</code>: each file's text density is probed first, and only files
+      that look scanned go through OCR — it's much slower than a normal conversion, and auto means
+      you only pay that cost when you have to. Use <code>--ocr off</code> to disable it entirely,
+      or <code>--ocr force</code> to run it on everything.
+    </p>
+    <p class="callout">
+      When the OCR service isn't running you don't get a wall of connection errors — you get a clear
+      message about how to start it, and the file is converted in normal mode instead.
+      Installation is on the <a href="../download/index.html">download page</a>.
+    </p>
+
+    <h2 id="ui">Desktop app and web service<a class="anchor" href="#ui">#</a></h2>
+    <ul class="list">
+      <li><strong>Desktop app</strong>: drag files in, tick the options, convert. The work runs on a
+        background thread so the window stays responsive, progress is live, and one failed file
+        doesn't stop the rest.</li>
+      <li><strong>Web service</strong>: a watched folder plus a local web page, meant to be left
+        running. Upload from the browser, watch the log, download results.
+        <strong>It binds to localhost and has no access control</strong> — don't put it on an
+        untrusted network.</li>
+    </ul>
+
+    <div class="docs__nextprev">
+      <a href="../download/index.html">← Install &amp; download</a>
+      <a class="sp" href="mcp/index.html">MCP setup →</a>
+    </div>
+  </article>
+
+  <nav class="docs__toc" aria-label="On this page">
+    <b>On this page</b>
+    <a href="#first">First conversion</a>
+    <a href="#formats">Input and output</a>
+    <a href="#options">Common options</a>
+    <a href="#batch">Batches</a>
+    <a href="#ai">AI-facing output</a>
+    <a href="#ocr">Scans and OCR</a>
+    <a href="#ui">App and service</a>
+  </nav>
+
+</div>
+
+<footer class="foot">
+  <div class="wrap foot__in">
+    <span>© 2026 AImorsel</span>
+    <a href="https://github.com/aimorsel">GitHub</a>
+    <a href="index.html">Docs</a>
+    <a href="mcp/index.html">MCP guide</a>
+    <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache-2.0</a>
+    <a class="sp" href="../../docs/index.html" lang="zh-Hans" hreflang="zh-Hans">中文</a>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+# 字体带哈希无关的稳定文件名，长缓存；HTML 不缓存以便随时改文案
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/site.css
+  Cache-Control: public, max-age=3600
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

@@ -1,0 +1,44 @@
+# config.toml — 常用参数的默认值配置
+#
+# 取消注释某一行即可生效。这里只是「默认值」：
+#   - 命令行显式传的参数永远优先于这里的配置
+#   - GUI 启动时会用这里的值初始化控件，之后界面上改动优先
+#   - 交互模式（不带参数运行且逐项询问）不读本文件
+# 布尔开关在命令行只能「开」不能「关」，所以想长期关掉某项就注释掉或设为 false。
+
+[ui]
+# lang = "zh"                    # 界面语言 zh / en（默认跟随系统；环境变量 MORSEL_LANG 优先级更高）
+
+[convert]
+# format = "markdown,json"       # 输出格式，逗号分隔：markdown / json / html / text / pdf
+# output = "/absolute/path/out"  # 输出目录（建议绝对路径；相对路径按运行时所在目录解析）
+# pages = ""                     # 只转指定页码，如 "1,3,5-7"；空 = 全部
+# images = "external"            # off / embedded / external
+# page_markers = false           # 在 Markdown/文本里插入分页标记
+# better_tables = false          # 增强表格识别（cluster 模式）
+# sanitize = false               # 敏感信息脱敏
+# header_footer = false          # 保留页眉页脚
+# keep_all_content = false       # 关闭内容安全过滤（隐藏/页外/微小文字也保留）
+# threads = 0                    # 每页并行线程数，0/1 = 串行
+
+[ocr]
+# mode = "auto"                  # off / auto / force
+# url = "http://127.0.0.1:5002"  # hybrid OCR 服务地址
+
+[batch]
+# jobs = 1                       # 并发转换进程数
+# resume = true                  # false = 每次都全部重转（等价 --force）
+# report = true                  # false = 不生成 report.csv
+
+[rag]
+# enabled = false                # 转换后输出 RAG 分块（<名>.chunks.jsonl）
+# chunk_size = 400               # 每块目标 token 数（估算值）
+
+[tables]
+# enabled = false                # 把识别出的所有表格导出为 CSV（<名>_tables/）
+
+[merge]
+# enabled = false                # 转换后把本批文档合并成带目录的 merged.md
+
+[qa]
+# enabled = false                # 质量自检：标注版 PDF + 逐页统计（<名>.qa.csv）

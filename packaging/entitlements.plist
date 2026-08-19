@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Hardened Runtime 授权项（公证的硬性前提）。给包内所有可执行文件共用一份。
+  三项都属于「自助生效」的豁免，不需要 Apple 额外审批。
+
+  allow-jit / allow-unsigned-executable-memory
+      JVM 需要可写可执行内存。OpenJDK 自己发布的二进制也是这两项一起用的；
+      少了任何一项，捆绑 JRE 里的 java 在 hardened runtime 下会直接崩。
+  disable-library-validation
+      PyInstaller onedir 在运行时 dlopen 一百多个 .so；另外
+      tkinterdnd2 带的 osx-x64/libtkdnd2.9.4.dylib 是 x86_64 单架构库。
+      不关掉库校验，加载非同一签名主体的库会被拒。
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>com.apple.security.cs.allow-jit</key>
+    <true/>
+    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+    <true/>
+    <key>com.apple.security.cs.disable-library-validation</key>
+    <true/>
+</dict>
+</plist>

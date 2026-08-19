@@ -1,0 +1,16 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aimorsel"
+version = "0.0.1"
+description = "AImorsel - local-first document feeder for AI. Converts PDF/Office/images into token-efficient, AI-ready Markdown/JSON. Placeholder release; first public version coming soon."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "Apache-2.0" }
+authors = [{ name = "AImorsel" }]
+keywords = ["pdf", "markdown", "ai", "rag", "mcp", "document", "converter"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aimorsel"]

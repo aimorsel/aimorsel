@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>快速开始 — AImorsel 文粒文档</title>
+<meta name="description" content="AImorsel 快速开始：安装、第一次转换、常用选项、批量处理、面向 AI 的加工（RAG 分块 / 表格导出 / 质量自检）与扫描件 OCR。" />
+<link rel="canonical" href="https://aimorsel.dev/docs/" />
+<link rel="alternate" hreflang="zh-Hans" href="https://aimorsel.dev/docs/" />
+<link rel="alternate" hreflang="en" href="https://aimorsel.dev/en/docs/" />
+<link rel="alternate" hreflang="x-default" href="https://aimorsel.dev/docs/" />
+<link rel="stylesheet" href="../assets/site.css" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231F5FD0'/><rect x='7' y='9' width='18' height='3.5' rx='1.5' fill='white'/><rect x='7' y='15' width='13' height='2.5' rx='1.25' fill='white' opacity='.7'/><rect x='7' y='20' width='9' height='2.5' rx='1.25' fill='white' opacity='.45'/></svg>" />
+</head>
+<body>
+
+<a class="skip" href="#main">跳到正文</a>
+
+<nav class="nav">
+  <div class="wrap nav__in">
+    <a class="brand" href="../index.html"><span>AImorsel</span><span class="cn">文粒</span></a>
+    <div class="navlinks">
+      <a class="hide-sm" href="../index.html#structure">能做什么</a>
+      <a class="hide-sm" href="../index.html#agent">给 Agent 用</a>
+      <a href="../download/index.html">下载</a>
+      <a href="index.html" aria-current="page">文档</a>
+      <a href="https://github.com/aimorsel">GitHub</a>
+      <a class="lang" href="../en/docs/index.html" lang="en" hreflang="en">EN</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap docs" id="main">
+
+  <aside class="docs__side">
+    <div class="docs__group">
+      <h4>开始</h4>
+      <a href="index.html" aria-current="page">快速开始</a>
+      <a href="../download/index.html">安装与下载</a>
+    </div>
+    <div class="docs__group">
+      <h4>给 Agent</h4>
+      <a href="mcp/index.html">MCP 接入</a>
+    </div>
+    <div class="docs__group">
+      <h4>别处</h4>
+      <a href="https://github.com/aimorsel">GitHub 仓库</a>
+      <a href="../index.html">回首页</a>
+    </div>
+  </aside>
+
+  <article class="docs__body">
+    <p class="docs__crumb">文档 / 快速开始</p>
+    <h1>快速开始</h1>
+    <p>
+      三种用法，同一套转换逻辑：终端里敲命令、图形界面拖文件、起一个常驻服务盯住文件夹。
+      加上给 Agent 用的 MCP，一共四个入口。
+    </p>
+
+    <h2 id="first">第一次转换<a class="anchor" href="#first">#</a></h2>
+    <p>把文件放进 <code>raw/</code>，然后不带参数直接跑——它会列出目录里的文件让你按编号挑：</p>
+<pre class="code"><span class="p">$</span> morsel
+<span class="c"># 也可以直接给路径，或者从访达把文件/文件夹拖进终端</span>
+<span class="p">$</span> morsel 报告.pdf
+<span class="p">$</span> morsel ~/Documents/合同/</pre>
+    <p>
+      产物默认进 <code>output/&lt;文件名&gt;/</code>，一个文件一个子目录，同名文件不会互相覆盖，
+      提取出来的图片也有地方归拢。默认输出 Markdown 和 JSON 两种格式。
+    </p>
+
+    <h2 id="formats">输入与输出<a class="anchor" href="#formats">#</a></h2>
+    <div class="tablewrap tablewrap--narrow">
+      <table>
+        <thead><tr><th>输入</th><th>页的含义</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><th>.pdf</th><td>物理页</td><td>主路径，版面分析最完整：标题层级、表格、坐标、字号</td></tr>
+          <tr><th>.docx</th><td>全文算第 1 页</td><td>标题层级、列表、表格都保留</td></tr>
+          <tr><th>.xlsx</th><td>每个工作表一页</td><td>读公式的缓存值</td></tr>
+          <tr><th>.pptx</th><td>每张幻灯片一页</td><td>含演讲者备注</td></tr>
+          <tr><th>.html / .htm</th><td>全文算第 1 页</td><td>标准库解析，零额外依赖；脚本与样式丢弃</td></tr>
+          <tr><th>图片</th><td>每帧一页</td><td>png jpg tiff bmp webp gif；需 OCR 才能出文字</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="body-text">
+      输出有五种：<code>markdown</code>、<code>json</code>、<code>html</code>、<code>text</code>，
+      以及 <code>pdf</code>——最后这个是<strong>标注版 PDF</strong>，把识别出的每个区块用彩色框标回原文，
+      用来检查版面识别准不准。
+    </p>
+<pre class="code"><span class="p">$</span> morsel 报告.pdf -f markdown,json,text
+<span class="p">$</span> morsel 报告.pdf --pages 1,3,5-7     <span class="c"># 只转指定页</span>
+<span class="p">$</span> morsel 加密的.pdf -p 密码</pre>
+
+    <h2 id="options">常用选项<a class="anchor" href="#options">#</a></h2>
+    <dl class="kv">
+      <div><dt>--better-tables</dt><dd>增强表格识别。默认靠边框找表格，无边框表格需要开这个</dd></div>
+      <div><dt>--images</dt><dd><code>off</code> / <code>embedded</code> / <code>external</code>（默认）。external 能稳定导出图片文件</dd></div>
+      <div><dt>--page-markers</dt><dd>在 Markdown / 文本里插入分页标记，方便引用溯源</dd></div>
+      <div><dt>--sanitize</dt><dd>把邮箱、电话、身份证、信用卡、IP 换成占位符</dd></div>
+      <div><dt>--header-footer</dt><dd>保留页眉页脚（默认丢弃）</dd></div>
+      <div><dt>--keep-all-content</dt><dd>关闭内容过滤。怀疑有内容缺失时用它把页外和极小的文字也找回来</dd></div>
+    </dl>
+    <p class="body-text">
+      常用组合可以写进项目根目录的 <code>config.toml</code> 当默认值。
+      规则很简单：<strong>配置只改默认值，命令行显式传的参数永远优先</strong>。
+      写错的键会给出提示并忽略，不会中断运行。
+    </p>
+
+    <h2 id="batch">批量与长跑<a class="anchor" href="#batch">#</a></h2>
+<pre class="code"><span class="p">$</span> morsel ~/合同/ --jobs 4          <span class="c"># 四个进程并发</span>
+<span class="p">$</span> morsel ~/合同/ --force           <span class="c"># 不跳过，全部重转</span>
+<span class="p">$</span> morsel --watch ~/Dropbox/收件    <span class="c"># 常驻监听，新文件自动转</span></pre>
+    <ul class="list">
+      <li><strong>断点续传默认开着。</strong>成功记录写进输出目录的清单文件，记的是源文件的修改时间、
+        大小和这次用的选项签名。源文件改了、或者换了输出格式和参数，都会自动重转。
+        每成功一个就落盘，中途断电不丢进度。</li>
+      <li><strong>失败的文件不记入清单</strong>，下次自然重试。</li>
+      <li><strong>每批生成一份 <code>report.csv</code></strong>：状态、页数、产物数、耗时、是否走了 OCR、
+        失败原因。用 utf-8-sig 编码，Excel 打开中文不乱码。</li>
+      <li><strong>监听模式会等文件稳定</strong>：连续两轮大小和修改时间都没变才转，
+        避免转到还在拷贝中的半截文件——对网盘同步目录尤其重要。</li>
+    </ul>
+
+    <h2 id="ai">面向 AI 的加工<a class="anchor" href="#ai">#</a></h2>
+<pre class="code"><span class="p">$</span> morsel 年报.pdf --rag-chunks --chunk-size 400
+<span class="p">$</span> morsel 年报.pdf --export-tables
+<span class="p">$</span> morsel ~/资料/ --merge
+<span class="p">$</span> morsel 年报.pdf --qa</pre>
+    <dl class="kv">
+      <div><dt>RAG 分块</dt><dd>按标题层级 + token 预算切块，输出一行一块的 <code>.chunks.jsonl</code>，每块带页码范围和标题路径。标题处开新块，太小的小节自动与后文合并，正文超预算按行、按句逐级切开</dd></div>
+      <div><dt>表格导出</dt><dd>每个表格单独一个 CSV，文件名带页码；跨行跨列的单元格填在左上角锚点</dd></div>
+      <div><dt>多文档合并</dt><dd>本批的 Markdown 合成一份带可点目录的 <code>merged.md</code>，每份文档占一个一级标题</dd></div>
+      <div><dt>质量自检</dt><dd>生成标注版 PDF（标题蓝、正文绿）加一份逐页统计 CSV，标出空白页、疑似扫描页和低密度页，并在日志里报「N/M 页疑似需复核」</dd></div>
+    </dl>
+    <p class="body-text">
+      分块和表格导出都基于 JSON 结构树。没选 json 输出时会自动补转一份。
+    </p>
+
+    <h2 id="ocr">扫描件与 OCR<a class="anchor" href="#ocr">#</a></h2>
+    <p class="body-text">
+      OCR 默认是 <code>auto</code>：每个文件先探测文字密度，只有疑似扫描件才走 OCR——
+      OCR 比普通转换慢不少，auto 让你只在必要时付这个代价。
+      也可以 <code>--ocr off</code> 完全关掉，或 <code>--ocr force</code> 全部强制。
+    </p>
+    <p class="callout">
+      OCR 服务没启动时不会报一堆连接错误，而是明确告诉你怎么启动，并把文件降级成普通模式转换。
+      安装方式见<a href="../download/index.html">下载页</a>。
+    </p>
+
+    <h2 id="ui">图形界面与 Web 服务<a class="anchor" href="#ui">#</a></h2>
+    <ul class="list">
+      <li><strong>图形界面</strong>：拖文件进去、勾选项、点转换。转换跑在后台线程，界面不卡，
+        进度实时；单个文件失败不中断整批。</li>
+      <li><strong>Web 常驻服务</strong>：把「监听文件夹」和一个本机网页界面合在一起，适合挂在后台长期跑。
+        浏览器里上传、看日志、下载产物。<strong>默认只绑本机，且没有访问控制</strong>——
+        别暴露到不可信网络。</li>
+    </ul>
+
+    <div class="docs__nextprev">
+      <a href="../download/index.html">← 安装与下载</a>
+      <a class="sp" href="mcp/index.html">MCP 接入 →</a>
+    </div>
+  </article>
+
+  <nav class="docs__toc" aria-label="本页目录">
+    <b>本页</b>
+    <a href="#first">第一次转换</a>
+    <a href="#formats">输入与输出</a>
+    <a href="#options">常用选项</a>
+    <a href="#batch">批量与长跑</a>
+    <a href="#ai">面向 AI 的加工</a>
+    <a href="#ocr">扫描件与 OCR</a>
+    <a href="#ui">界面与服务</a>
+  </nav>
+
+</div>
+
+<footer class="foot">
+  <div class="wrap foot__in">
+    <span>© 2026 AImorsel · 文粒</span>
+    <a href="https://github.com/aimorsel">GitHub</a>
+    <a href="index.html">文档</a>
+    <a href="mcp/index.html">MCP 指南</a>
+    <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache-2.0</a>
+    <a class="sp" href="../en/docs/index.html" lang="en" hreflang="en">English</a>
+  </div>
+</footer>
+
+</body>
+</html>

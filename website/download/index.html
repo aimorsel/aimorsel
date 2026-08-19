@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>下载 — AImorsel 文粒</title>
+<meta name="description" content="AImorsel 桌面版下载：macOS（Apple Silicon / Intel）与 Windows。包内自带精简 Java 运行时，解压即用。也可以从源码安装。" />
+<link rel="canonical" href="https://aimorsel.dev/download/" />
+<link rel="alternate" hreflang="zh-Hans" href="https://aimorsel.dev/download/" />
+<link rel="alternate" hreflang="en" href="https://aimorsel.dev/en/download/" />
+<link rel="alternate" hreflang="x-default" href="https://aimorsel.dev/download/" />
+<link rel="stylesheet" href="../assets/site.css" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231F5FD0'/><rect x='7' y='9' width='18' height='3.5' rx='1.5' fill='white'/><rect x='7' y='15' width='13' height='2.5' rx='1.25' fill='white' opacity='.7'/><rect x='7' y='20' width='9' height='2.5' rx='1.25' fill='white' opacity='.45'/></svg>" />
+</head>
+<body>
+
+<a class="skip" href="#main">跳到正文</a>
+
+<nav class="nav">
+  <div class="wrap nav__in">
+    <a class="brand" href="../index.html"><span>AImorsel</span><span class="cn">文粒</span></a>
+    <div class="navlinks">
+      <a class="hide-sm" href="../index.html#structure">能做什么</a>
+      <a class="hide-sm" href="../index.html#agent">给 Agent 用</a>
+      <a href="index.html" aria-current="page">下载</a>
+      <a class="hide-sm" href="../docs/index.html">文档</a>
+      <a href="https://github.com/aimorsel">GitHub</a>
+      <a class="lang" href="../en/download/index.html" lang="en" hreflang="en">EN</a>
+    </div>
+  </div>
+</nav>
+
+<main id="main">
+
+  <header class="wrap pagehead">
+    <p class="eyebrow">下载</p>
+    <h1>解压就是全部安装过程</h1>
+    <p>包里自带精简 Java 运行时，不用另装 Java，也不用装 Python。转换全程在本机完成。</p>
+  </header>
+
+  <section class="wrap sec">
+    <div class="dl">
+      <div class="dlcard">
+        <b>macOS</b>
+        <span class="arch">Apple Silicon · arm64</span>
+        <span class="ph">下载直链待首个正式版发布后填入</span>
+      </div>
+      <div class="dlcard">
+        <b>macOS</b>
+        <span class="arch">Intel · x86_64</span>
+        <span class="ph">下载直链待首个正式版发布后填入</span>
+      </div>
+      <div class="dlcard">
+        <b>Windows</b>
+        <span class="arch">x64</span>
+        <span class="ph">下载直链待首个正式版发布后填入</span>
+      </div>
+    </div>
+    <p class="callout callout--gap">
+      〔占位〕首次运行时系统会怎么提示、需不需要手动放行——这一段等首个正式版实际发布后，
+      按当时的真实情况写，现在不写。
+    </p>
+  </section>
+
+  <section class="wrap sec sec--tight stack--wide stack">
+    <div>
+      <h2 class="h2">包里有什么</h2>
+      <dl class="kv">
+        <div><dt>三个程序</dt><dd>命令行、图形界面、Web 常驻服务，共用同一份依赖</dd></div>
+        <div><dt>Java 运行时</dt><dd>用 jlink 裁过的精简运行时，只带用得到的模块</dd></div>
+        <div><dt>工作目录</dt><dd><code>raw/</code>（放待转文件）、<code>output/</code>（产物）、<code>config.toml</code>（默认参数）都在可执行文件旁边</dd></div>
+        <div><dt>不含</dt><dd>OCR 服务。它依赖较重（几个 GB），按需单独装，见下</dd></div>
+      </dl>
+    </div>
+
+    <div>
+      <h2 class="h2">从源码安装</h2>
+      <p class="body-text">需要 Python 3.10 或更高、Java 11 或更高。Java 是必需的——真正做版面分析的引擎是 Java 写的。</p>
+<pre class="code"><span class="p">$</span> git clone https://github.com/aimorsel/aimorsel.git
+<span class="p">$</span> cd aimorsel
+<span class="p">$</span> pip install -r requirements.txt
+<span class="p">$</span> java -version   <span class="c"># 确认 Java 在</span></pre>
+      <p class="body-text">
+        除核心引擎外的依赖都是可选的：缺哪个只影响对应功能，报错里会直接给出安装命令。
+        HTML 输入用标准库解析，不需要额外装东西。
+      </p>
+    </div>
+
+    <div>
+      <h2 class="h2">扫描件与图片：另装 OCR</h2>
+      <p class="body-text">
+        扫描件和图片没有文字层，要出文字得先装一次 OCR 服务。它是一个跑在本机的独立服务，
+        依赖装在单独的环境里，不污染系统，卸载就是删掉那个目录。
+      </p>
+<pre class="code"><span class="p">$</span> morsel --setup-ocr              <span class="c"># 建环境、装依赖、启动服务</span>
+<span class="p">$</span> morsel --setup-ocr-lang "de,en" <span class="c"># 按文档语言指定</span>
+<span class="p">$</span> morsel --stop-ocr</pre>
+      <p class="callout">
+        <strong>语言要对得上。</strong>实测中影响识别质量最大的因素就是这个：
+        用中文模型识别德语文档，变音符号会全错、丢行严重，换成 <code>de,en</code> 后明显改善。
+        一批多语言文档需要按语言分批处理。
+      </p>
+    </div>
+
+    <div>
+      <h2 class="h2">先知道这些限制</h2>
+      <ul class="list">
+        <li><strong>扫描件 OCR 适合检索和定位，不适合当忠实全文。</strong>印刷体正文可靠，
+          但数学公式基本丢失、手写标记基本忽略，过小的字号会丢行。</li>
+        <li><strong>无边框表格的识别有限。</strong>底层默认靠边框找表格，遇到无边框表格要开增强表格识别。</li>
+        <li><strong>PDF 里字体编码映射坏掉时会出乱码</strong>，这属于源文件的问题，解析引擎无能为力。</li>
+        <li><strong>Web 服务没有访问控制</strong>，默认只绑本机，别暴露到不可信网络。</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__in">
+    <span>© 2026 AImorsel · 文粒</span>
+    <a href="https://github.com/aimorsel">GitHub</a>
+    <a href="../docs/index.html">文档</a>
+    <a href="../docs/mcp/index.html">MCP 指南</a>
+    <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache-2.0</a>
+    <a class="sp" href="../en/download/index.html" lang="en" hreflang="en">English</a>
+  </div>
+</footer>
+
+</body>
+</html>

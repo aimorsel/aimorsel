@@ -1,0 +1,6 @@
+# 本机私有：解释器路径 / 语料 / 结果 / 日志 / 虚拟环境
+engines.toml
+corpus/
+results/
+logs/
+envs/

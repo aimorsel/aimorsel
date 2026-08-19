@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AImorsel 文粒 — 文档的查询接口，全程离线</title>
+<meta name="description" content="把 PDF、Word、Excel、PPT、网页、图片转成带标题层级、表格结构和页码溯源的 Markdown / JSON。全程离线，文件不出本机。内置 MCP Server，Agent 可以先看大纲再按需取节。" />
+<link rel="canonical" href="https://aimorsel.dev/" />
+<link rel="alternate" hreflang="zh-Hans" href="https://aimorsel.dev/" />
+<link rel="alternate" hreflang="en" href="https://aimorsel.dev/en/" />
+<link rel="alternate" hreflang="x-default" href="https://aimorsel.dev/" />
+<link rel="stylesheet" href="assets/site.css" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231F5FD0'/><rect x='7' y='9' width='18' height='3.5' rx='1.5' fill='white'/><rect x='7' y='15' width='13' height='2.5' rx='1.25' fill='white' opacity='.7'/><rect x='7' y='20' width='9' height='2.5' rx='1.25' fill='white' opacity='.45'/></svg>" />
+</head>
+<body>
+
+<a class="skip" href="#main">跳到正文</a>
+
+<nav class="nav">
+  <div class="wrap nav__in">
+    <a class="brand" href="index.html"><span>AImorsel</span><span class="cn">文粒</span></a>
+    <div class="navlinks">
+      <a class="hide-sm" href="#structure">能做什么</a>
+      <a class="hide-sm" href="#agent">给 Agent 用</a>
+      <a href="download/index.html">下载</a>
+      <a class="hide-sm" href="docs/index.html">文档</a>
+      <a href="https://github.com/aimorsel">GitHub</a>
+      <a class="lang" href="en/index.html" lang="en" hreflang="en">EN</a>
+    </div>
+  </div>
+</nav>
+
+<main id="main">
+
+  <section class="wrap hero">
+    <div class="hero__in">
+      <div>
+        <p class="eyebrow">本地运行 · 开源 · MCP 就绪</p>
+        <h1>不是转换器，是<span class="mk">文档的查询接口</span></h1>
+        <p class="hero__sub">
+          PDF、Word、Excel、PPT、网页、图片进来，带标题层级、表格结构和页码溯源的
+          Markdown / JSON 出去。Agent 先要目录，再决定读哪一节——进上下文的只有需要的那几段。
+        </p>
+        <div class="hero__cta">
+          <a class="btn btn--primary" href="download/index.html">下载桌面版</a>
+          <a class="btn btn--ghost" href="#agent">接入 MCP</a>
+        </div>
+        <p class="hero__meta">
+          <span><i></i>文件不出本机</span>
+          <span><i></i>Apache-2.0</span>
+          <span><i></i>macOS &amp; Windows</span>
+          <span><i></i>命令行 / 图形界面 / Web / MCP</span>
+        </p>
+      </div>
+
+      <div class="desk">
+        <div class="deskbar"><span class="fn">get_outline</span>("年报.pdf")<span class="kbd">Agent 调用</span></div>
+        <div class="rows">
+          <div class="row"><span class="path">2　业务回顾</span><span class="pg">p.4–11</span></div>
+          <div class="row row--on"><span class="path">3.2　财务摘要 <span class="dim">· 含表格 2 个</span></span><span class="pg">p.12–14</span></div>
+          <div class="row"><span class="path">4　风险因素</span><span class="pg">p.15–22</span></div>
+        </div>
+        <p class="desk__step">只把这一节取进上下文</p>
+        <div class="deskbar"><span class="fn">get_section</span>("年报.pdf", "财务摘要")</div>
+        <div class="snip">
+          本年度<mark>毛利率</mark> 41.2%，较上年提升 2.6 个百分点，主要来自……
+          <span class="src">来源：年报.pdf · p.12 · 3.2 财务摘要</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap band__in">
+      <div>
+        <p class="eyebrow">Local only</p>
+        <h2>整条链路没有一次网络请求</h2>
+        <p>
+          解析引擎跑在你自己的机器上，装完就能断网用。合同、病历、财报、未公开的稿子——
+          这些本来就不该传给别人的服务器。
+        </p>
+        <p class="readout">
+          <span>上传　<b>0 字节</b></span>
+          <span>引擎　<b>本机运行</b></span>
+          <span>许可　<b>Apache-2.0</b></span>
+        </p>
+      </div>
+      <div>
+        <div class="panel">
+          <div class="ports">
+            <div class="port"><i></i>PDF</div>
+            <div class="port"><i></i>DOCX</div>
+            <div class="port"><i></i>XLSX</div>
+            <div class="port"><i></i>PPTX</div>
+            <div class="port"><i></i>HTML</div>
+            <div class="port"><i></i>IMAGE</div>
+          </div>
+          <div class="lane">
+            <div class="arr">→→→</div>
+            <div class="cut">NETWORK<br />NOT WIRED</div>
+            <div class="arr">→→→</div>
+          </div>
+          <div class="outs">
+            <div>MARKDOWN</div>
+            <div>JSON</div>
+            <div>HTML</div>
+            <div>TEXT</div>
+            <div>标注版 PDF</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap sec" id="structure">
+    <div class="split split--rev">
+      <div>
+        <p class="eyebrow">结构与溯源</p>
+        <h2 class="h2">它认得出结构，不只是抠出文字</h2>
+        <p class="split__p">
+          标题分几级、表格几行几列、这段话落在第几页，都写进输出。
+          开了质量自检，它还会把识别结果标回原文——哪里认错了，你自己能看见。
+        </p>
+        <div class="legend">
+          <span><i style="border-color:var(--accent)"></i>标题</span>
+          <span><i style="border-color:var(--ok)"></i>正文与表格</span>
+          <span><i style="border-color:var(--warn);border-style:dashed"></i>建议复核</span>
+        </div>
+        <p class="split__note">
+          这三个颜色不是设计师挑的，就是质量自检生成的标注版 PDF 用的颜色。
+        </p>
+      </div>
+      <div class="split__fig">
+        <div class="page">
+          <div class="blk blk--h"><span class="tag">标题 · h2 · p.3</span>3.2　财务摘要</div>
+          <div class="blk blk--t"><span class="tag">段落 · p.3</span>
+            <div class="bar"></div><div class="bar"></div><div class="bar bar--s"></div>
+          </div>
+          <div class="blk blk--t"><span class="tag">表格 · 4×6 · p.4</span>
+            <div class="cells"><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div>
+          </div>
+          <div class="blk blk--w"><span class="tag">疑似扫描页 · p.5</span>整页没有文字层，已转给 OCR 通道</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap sec sec--tight">
+    <div class="sechead">
+      <p class="eyebrow">进 / 出</p>
+      <h2>六种进，五种出</h2>
+      <p>混在一个文件夹里批量转也行。扫描件会被自动认出来，转到 OCR 通道。</p>
+    </div>
+    <div class="flow">
+      <div class="flow__col">
+        <p class="flow__lab">输入</p>
+        <div class="chip">PDF<em>版面最完整</em></div>
+        <div class="chip">Word<em>docx</em></div>
+        <div class="chip">Excel<em>xlsx · 每表一页</em></div>
+        <div class="chip">PowerPoint<em>pptx · 每页一页</em></div>
+        <div class="chip">网页<em>html · 零依赖</em></div>
+        <div class="chip">图片<em>png jpg tiff bmp webp gif</em></div>
+      </div>
+      <div class="flow__mid">
+        <div class="flow__arr">→→→</div>
+        <div class="flow__engine">版面分析 · 本机</div>
+        <div class="flow__arr">→→→</div>
+      </div>
+      <div class="flow__col">
+        <p class="flow__lab">输出</p>
+        <div class="chip">Markdown<em>给人读</em></div>
+        <div class="chip">JSON 结构树<em>给程序</em></div>
+        <div class="chip">RAG 分块<em>jsonl · 带页码与标题路径</em></div>
+        <div class="chip">表格 CSV<em>一表一件</em></div>
+        <div class="chip">标注版 PDF<em>核对识别结果</em></div>
+      </div>
+    </div>
+    <p class="callout callout--gap">
+      图片和扫描件要出文字，需要先装一次 OCR 服务（命令行一条命令装好，依赖有几个 GB，同样全程本地）。
+      不装也能用，只是扫描件转出来没有文字。
+    </p>
+  </section>
+
+  <section class="wrap sec" id="agent">
+    <div class="sechead">
+      <p class="eyebrow">给 Agent 用</p>
+      <h2>让 Agent 自己去翻，而不是把整本塞进去</h2>
+      <p>内置 MCP Server，一行注册就多出 8 个工具。文档留在本机，Agent 只取需要的部分。</p>
+    </div>
+    <div class="split">
+      <div>
+<pre class="code"><span class="c"># 注册（Claude Code）</span>
+<span class="p">$</span> claude mcp add aimorsel -- morsel mcp
+
+<span class="c"># 之后 Agent 自己会这么用</span>
+<span class="fn">get_outline</span>(<span class="s">"年报.pdf"</span>)
+<span class="fn">get_section</span>(<span class="s">"年报.pdf"</span>, <span class="s">"财务摘要"</span>)
+<span class="fn">search_documents</span>(<span class="s">"毛利率"</span>)</pre>
+        <p class="split__link"><a href="docs/mcp/index.html">完整 MCP 接入指南 →</a></p>
+      </div>
+      <div class="tablewrap tablewrap--narrow">
+        <table>
+          <thead><tr><th>工具</th><th>它做什么</th></tr></thead>
+          <tbody>
+            <tr><th>get_outline</th><td>只返回标题树、每节页码与 token 估算——读大文档的第一步</td></tr>
+            <tr><th>get_section</th><td>按标题取某一节正文，标题模糊匹配</td></tr>
+            <tr><th>search_documents</th><td>跨已转换文档检索，命中带页码与标题路径</td></tr>
+            <tr><th>read_pdf_markdown</th><td>小文档一次读完，直接返回正文</td></tr>
+            <tr><th>extract_tables</th><td>把所有表格以 CSV 文本返回</td></tr>
+            <tr><th>get_chunks</th><td>RAG 分块 JSONL，每块带页码与标题路径</td></tr>
+            <tr><th>qa_check</th><td>逐页统计，标出空白页、疑似扫描页、低密度页</td></tr>
+            <tr><th>convert_pdf</th><td>转换并返回产物清单；没变过的文件直接命中缓存</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap sec sec--tight">
+    <div class="claim">
+      <div>
+        <p class="eyebrow">批量</p>
+        <h2>一千份文档，不用守着</h2>
+        <p class="claim__lead">
+          中途断电、临时加文件、隔天再跑——接着上次继续，不重复劳动。
+        </p>
+      </div>
+      <dl class="props">
+        <div class="prop"><dt>断点续传</dt><dd>只转新的和改过的；换了输出格式或参数会自动重转</dd></div>
+        <div class="prop"><dt>多进程并发</dt><dd>几十份以上明显更快，坏文件不拖垮整批</dd></div>
+        <div class="prop"><dt>监听文件夹</dt><dd>丢进去就转；文件还在拷贝中会等它稳定</dd></div>
+        <div class="prop"><dt>转换报告</dt><dd>每批一份 CSV：状态、页数、耗时、失败原因，Excel 直接打开</dd></div>
+        <div class="prop"><dt>失败有下限</dt><dd>引擎解析不了的文件降级成纯文本兜底，而不是留个空目录</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="wrap sec" id="bench">
+    <div class="sechead">
+      <p class="eyebrow">自有评测</p>
+      <h2>数字都在仓库里，每一行都能自己复算</h2>
+      <p>731 份公开语料 × 5 个引擎 = 3224 条记录。真值直接从源文件解析（arXiv 的 LaTeX 源码、法规的 HTML 版、合成件的已知结构），不是人打分，也不用大模型当裁判。</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th>引擎</th>
+            <th>能吃的输入</th>
+            <th>731 份里转成功</th>
+            <th>文本相似（双方都成功的文档上，对手 / 我们）</th>
+            <th>中位耗时</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th>AImorsel</th><td>全部 8 类格式</td><td>731（100%）</td><td>—</td><td>1.6 秒/份</td></tr>
+          <tr><th>docling</th><td>与我们相当</td><td>299 / 300（分层子集）</td><td>0.841 / 0.839</td><td>11.2 秒/份</td></tr>
+          <tr><th>pymupdf4llm</th><td>只吃 PDF</td><td>293（40%）</td><td>0.775 / 0.773</td><td>7.2 秒/份</td></tr>
+          <tr><th>markitdown</th><td>除图片与扫描件外的多数格式</td><td>539（74%）</td><td>0.715 / 0.842</td><td>0.8 秒/份</td></tr>
+          <tr><th>pdfplumber</th><td>只吃 PDF，纯文本</td><td>289（40%）</td><td>0.574 / 0.778</td><td>0.5 秒/份</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="fineprint">
+      不支持的格式按失败计——这一列衡量的是「一个混装文件夹丢进去，多少份能出东西」。
+      与 docling、pymupdf4llm 的文本保真度基本持平，耗时差一个数量级（docling 峰值内存 p95 2.0 GB，我们 620 MB）。
+      另有一项静默事故只有我们和 docling 没犯：markitdown 与 pdfplumber 把 10 份阿拉伯语文档按视觉序输出，
+      字一个不少，但检索和分词全部失效。
+    </p>
+    <p class="callout callout--gap">
+      <b>两处必须说清楚。</b>docling 约 11 秒一份，全量跑不完，只跑了 300 份分层子集，它那一行的份数与别人不同；
+      在 77 份「所有引擎都成功」的交集上，docling 与 pymupdf4llm 的文本相似度高于我们（0.92 / 0.92 对 0.82），
+      那份子集样本小且偏向标准单栏 PDF——结构指标在同一张表上是我们领先。两张表都在结果页里。
+      最弱的一环是扫描件与图片：数字保真在有文字层的文档上是 0.891，走 OCR 通道只有 0.716，
+      扫描件里的数字适合检索定位，不能直接进表格。
+    </p>
+    <p class="fineprint">
+      <a href="https://github.com/aimorsel/aimorsel/blob/main/bench/RESULTS.md">完整结果表与口径说明 →</a>
+      语料清单、下载脚本、真值生成器、指标实现与跑批脚本都在仓库的 <code>bench/</code> 里，同一份 manifest 重跑误差小于 1%。
+    </p>
+  </section>
+
+  <section class="wrap sec" id="download">
+    <div class="sechead">
+      <p class="eyebrow">下载</p>
+      <h2>解压就是全部安装过程</h2>
+      <p>包里自带精简 Java 运行时，不用另装 Java，也不用装 Python。</p>
+    </div>
+    <div class="dl">
+      <div class="dlcard">
+        <b>macOS</b>
+        <span class="arch">Apple Silicon · arm64</span>
+        <span class="ph">下载直链待首个正式版发布后填入</span>
+      </div>
+      <div class="dlcard">
+        <b>macOS</b>
+        <span class="arch">Intel · x86_64</span>
+        <span class="ph">下载直链待首个正式版发布后填入</span>
+      </div>
+      <div class="dlcard">
+        <b>Windows</b>
+        <span class="arch">x64</span>
+        <span class="ph">下载直链待首个正式版发布后填入</span>
+      </div>
+    </div>
+    <p class="fineprint">
+      一个包里含命令行、图形界面、Web 服务三个程序，共用同一份依赖。
+      开发者也可以从源码装：见 <a href="download/index.html">下载页</a>。
+    </p>
+  </section>
+
+  <section class="wrap sec--tight">
+    <p class="pro">
+      <b>开源核心永远免费、永远完整、永远在本地。</b>
+      数学公式 → LaTeX 和手写识别正在做成可选的本地模型包，同样不联网。
+    </p>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__in">
+    <span>© 2026 AImorsel · 文粒</span>
+    <a href="https://github.com/aimorsel">GitHub</a>
+    <a href="docs/index.html">文档</a>
+    <a href="docs/mcp/index.html">MCP 指南</a>
+    <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache-2.0</a>
+    <a class="sp" href="en/index.html" lang="en" hreflang="en">English</a>
+  </div>
+</footer>
+
+</body>
+</html>

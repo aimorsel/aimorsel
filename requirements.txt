@@ -1,0 +1,18 @@
+# 核心转换引擎（内置 Java CLI，需要系统已装 Java 11+）
+opendataloader-pdf>=2.5.0
+
+# GUI 版的拖拽支持；不装也能用 GUI，只是拖拽功能会关闭，改用「添加文件」按钮
+tkinterdnd2>=0.4.0
+
+# 兜底网 + 扫描件快速探测（纯 Python，MIT）；不装也能用，退回 JVM 探测、无降级转换
+pdfplumber>=0.11.0
+
+# 结构损坏 PDF 的修复层（qpdf 绑定，MPL-2.0，可选）：主引擎与 pdfminer 都拒收的截断/坏 xref 文件
+# 先修复再喂主引擎，能保住完整结构树；不装则这类文件直接失败
+pikepdf>=8.0.0
+
+# 多格式输入适配器（均 MIT，可选）：缺哪个只影响对应格式，错误提示里会给安装命令
+python-docx>=1.1.0    # .docx
+openpyxl>=3.1.0       # .xlsx
+python-pptx>=1.0.0    # .pptx
+pillow>=10.0.0        # 图片输入（包装成 PDF 走 OCR 通道）；pdfplumber 已依赖它

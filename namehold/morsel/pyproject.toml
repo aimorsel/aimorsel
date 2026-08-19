@@ -1,0 +1,16 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "morsel"
+version = "0.0.1"
+description = "The `morsel` CLI of AImorsel - local-first document feeder for AI. Placeholder release; see the aimorsel package."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "Apache-2.0" }
+authors = [{ name = "AImorsel" }]
+keywords = ["pdf", "markdown", "ai", "rag", "mcp", "document", "converter"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/morsel"]

@@ -1,0 +1,24 @@
+name: Feature request / 功能建议
+description: Suggest an improvement / 想要一个新能力
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem / 想解决的问题
+      description: |
+        What are you trying to do that's currently hard or impossible?
+        你想完成什么？现在卡在哪里？
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution / 期望的样子
+      description: What would ideal behavior look like? CLI flag? GUI option? MCP tool?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Workarounds tried / 试过的替代办法

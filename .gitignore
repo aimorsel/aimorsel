@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# 本机 MCP 注册（含绝对路径，个人配置不入库；模板见 .mcp.json.example）
+.mcp.json
+
+# 用户数据与转换产物（不入库）
+raw/
+output/
+
+# 构建产物
+build/
+dist/
+packaging/jre/
+
+# macOS
+.DS_Store
+
+# 用户反馈截图等私有素材
+issues/

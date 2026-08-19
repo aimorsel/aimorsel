@@ -1,0 +1,19 @@
+# 二进制文件禁止行尾转换——Windows checkout 时 autocrlf 会把「看起来像文本」的
+# 未压缩 PDF（reportlab 默认不压缩）的 LF 改成 CRLF，流长度对不上，文件直接损坏
+# （CI 实测踩过：tests/data/simple.pdf 在 windows runner 上被转坏）。
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.tif binary
+*.tiff binary
+*.bmp binary
+*.webp binary
+*.docx binary
+*.xlsx binary
+*.pptx binary
+*.zip binary
+*.dmg binary
+*.p12 binary
+*.jar binary

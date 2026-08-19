@@ -1,0 +1,158 @@
+# 三平台发行包：推 v* tag 自动构建并挂到 GitHub Release；也可手动触发只出 artifact。
+# 每个平台构建后都用捆绑 JRE 真实转换一次 PDF + docx 做冒烟（grep _internal 证明
+# 用的是包内 java，不是 runner 系统 java）。
+# macOS 签名/公证：配齐 MACOS_* secrets 后自动生效（出 DMG），没配就出未签名 zip，
+# 详见 packaging/SIGNING.md。冒烟跑在签名之后——只有它能抓出 entitlements 配错
+# 导致的秒退，公证本身查不出来。
+# 注意：GUI 冒烟不在此跑（runner 无稳定桌面会话）；Windows 签名是另一套，未做。
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest      # arm64
+            label: macos-arm64
+          - os: macos-15-intel    # x86_64（macos-13 已退役，任务会永远排队）
+            label: macos-x86_64
+          - os: windows-latest
+            label: windows-x64
+    runs-on: ${{ matrix.os }}
+    # 公证是外部服务，慢的时候能排队 40 分钟以上（实测 2026-07-25 本机一次 40+ 分钟）。
+    # 不设上限的话 notarytool --wait 会挂到 job 默认的 6 小时超时，而 macOS runner
+    # 按 10 倍计费——一次卡死就烧掉 3600 分钟额度。
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller
+      # secrets 上下文在 step 的 if: 里不可用，先转成 output 再判断。
+      # 必须检查全部 5 个：只看其中一个的话，「配了一半」会让签名步骤启动后
+      # 在 security import 处失败、整个 release 变红，而不是干净地降级。
+      # 注意 runner 的 bash 是 -e，所以用 if 而不是 `[ -z x ] && y`
+      #（后者在条件为假时返回非 0，会直接终止脚本）。
+      - name: 探测 macOS 签名凭据
+        id: signing
+        shell: bash
+        env:
+          CERT_P12: ${{ secrets.MACOS_CERT_P12 }}
+          CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
+          NOTARY_KEY_P8: ${{ secrets.MACOS_NOTARY_KEY_P8 }}
+          NOTARY_KEY_ID: ${{ secrets.MACOS_NOTARY_KEY_ID }}
+          NOTARY_ISSUER: ${{ secrets.MACOS_NOTARY_ISSUER }}
+        run: |
+          MISSING=""
+          if [ -z "$CERT_P12" ]; then MISSING="$MISSING MACOS_CERT_P12"; fi
+          if [ -z "$CERT_PASSWORD" ]; then MISSING="$MISSING MACOS_CERT_PASSWORD"; fi
+          if [ -z "$NOTARY_KEY_P8" ]; then MISSING="$MISSING MACOS_NOTARY_KEY_P8"; fi
+          if [ -z "$NOTARY_KEY_ID" ]; then MISSING="$MISSING MACOS_NOTARY_KEY_ID"; fi
+          if [ -z "$NOTARY_ISSUER" ]; then MISSING="$MISSING MACOS_NOTARY_ISSUER"; fi
+          if [ "$RUNNER_OS" != "macOS" ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          elif [ -n "$MISSING" ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::缺少 secrets:$MISSING —— 跳过签名公证，产出未签名 zip"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::签名凭据齐全，将产出已公证的 DMG"
+          fi
+      - name: 构建
+        shell: bash
+        env:
+          VERSION: ${{ github.ref_type == 'tag' && github.ref_name || 'dev' }}
+        run: |
+          # 要签名时先不打 zip：签名后统一出 DMG，省一次无用的打包
+          if [ "${{ steps.signing.outputs.enabled }}" = "true" ]; then
+            python packaging/build.py --version "$VERSION" --no-zip
+          else
+            python packaging/build.py --version "$VERSION"
+          fi
+      - name: 导入签名证书
+        if: steps.signing.outputs.enabled == 'true'
+        env:
+          CERT_P12: ${{ secrets.MACOS_CERT_P12 }}
+          CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
+        run: |
+          KEYCHAIN_PWD=$(uuidgen)
+          echo "$CERT_P12" | base64 --decode > /tmp/cert.p12
+          security create-keychain -p "$KEYCHAIN_PWD" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PWD" build.keychain
+          security import /tmp/cert.p12 -k build.keychain -P "$CERT_PASSWORD" \
+            -T /usr/bin/codesign -T /usr/bin/security
+          # 漏掉这行 codesign 会弹密码框，CI 直接卡到超时
+          security set-key-partition-list -S apple-tool:,apple:,codesign: \
+            -s -k "$KEYCHAIN_PWD" build.keychain
+          security list-keychains -d user -s build.keychain login.keychain-db
+          rm -f /tmp/cert.p12
+      - name: 签名 + 公证 + DMG
+        if: steps.signing.outputs.enabled == 'true'
+        timeout-minutes: 60      # 单独卡上限，超时能一眼看出是卡在公证而非构建
+        env:
+          NOTARY_KEY_P8: ${{ secrets.MACOS_NOTARY_KEY_P8 }}
+          NOTARY_KEY_ID: ${{ secrets.MACOS_NOTARY_KEY_ID }}
+          NOTARY_ISSUER: ${{ secrets.MACOS_NOTARY_ISSUER }}
+          VERSION: ${{ github.ref_type == 'tag' && github.ref_name || 'dev' }}
+        run: |
+          echo "$NOTARY_KEY_P8" | base64 --decode > /tmp/notary.p8
+          python packaging/sign_macos.py --dmg --notarize --version "$VERSION" \
+            --key /tmp/notary.p8 --key-id "$NOTARY_KEY_ID" --issuer "$NOTARY_ISSUER"
+          rm -f /tmp/notary.p8
+      - name: 冒烟测试（捆绑 JRE + PDF + docx）
+        shell: bash
+        run: |
+          EXE=dist/morsel/morsel
+          if [ "$RUNNER_OS" = "Windows" ]; then EXE=dist/morsel/morsel.exe; fi
+          python -c "import docx; d = docx.Document(); d.add_heading('冒烟', 1); d.add_paragraph('内容'); d.save('smoke.docx')"
+          env MORSEL_DEBUG_JAVA=1 "$EXE" tests/data/simple.pdf smoke.docx -o smoke_out -f markdown | tee smoke.log
+          grep -q "_internal" smoke.log            # 用的是捆绑 JRE
+          test -s smoke_out/simple/simple.md       # PDF 产物
+          test -s smoke_out/smoke/smoke.md         # docx 产物（适配器依赖已进包）
+          # 子命令走动态 import，PyInstaller 不点名就会 ModuleNotFoundError（spec 里已点名，这里守住）。
+          # **别用 `… | grep -q`**：grep -q 命中即退出，会给上游进程 SIGPIPE，
+          # runner 的 bash 带 pipefail 时整条管道返回 141/120，间歇把已签名已公证的 release 跑红。
+          printf '' | "$EXE" mcp > mcp_smoke.log 2>&1 || true
+          grep -q "morsel-mcp" mcp_smoke.log
+          "$EXE" gui --help > /dev/null            # 分发前先 import，验证 hiddenimports 进包
+          "$EXE" web --help > /dev/null
+      - uses: actions/upload-artifact@v4
+        with:
+          name: morsel-${{ matrix.label }}
+          path: |
+            dist/*.zip
+            dist/*.dmg
+          if-no-files-found: error
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            *.zip
+            *.dmg
+          draft: true          # 先出草稿，人工补 Release Notes 后再发布
+          fail_on_unmatched_files: false   # macOS 出 dmg、Windows 出 zip，两者不会同时齐全

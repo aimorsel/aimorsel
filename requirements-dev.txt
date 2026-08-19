@@ -1,0 +1,5 @@
+# 开发/测试依赖（用户不需要装）
+pytest>=8.0
+
+# 重新生成 tests/data/ 下的 PDF fixture 时才需要（fixture 已提交入库，平时不用装）
+# reportlab>=4.0

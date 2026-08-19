@@ -1,0 +1,45 @@
+name: Bug report / 问题反馈
+description: Something broke or converted wrong / 转换出错或结果不对
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report! English or Chinese both welcome.
+        感谢反馈！中英文皆可。
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened / 发生了什么
+      description: |
+        What did you do, what did you expect, what happened instead?
+        做了什么操作、预期结果、实际结果。转换类问题请尽量附上 report.csv 里对应的行。
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce / 复现步骤
+      description: |
+        Exact command or clicks. If a specific file triggers it and it's not
+        confidential, attaching it (or a minimal lookalike) helps enormously.
+        具体命令或操作步骤；若特定文件触发且不涉密，附上文件（或一个最小复现样例）最有帮助。
+      placeholder: |
+        1. python3 morsel.py report.pdf --rag-chunks
+        2. ...
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Environment / 环境
+      description: OS + how you run it (source / standalone build) + Python & Java versions
+      placeholder: "macOS 15 arm64, standalone build v0.1.0 / 源码运行, Python 3.12, Java 21"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log output / 日志输出
+      description: Paste the relevant terminal / log panel output. 粘贴相关日志。
+      render: text

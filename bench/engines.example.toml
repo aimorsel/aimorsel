@@ -1,0 +1,11 @@
+# 各引擎用哪个解释器（可选；未列出的用当前解释器）。路径按本机改，此文件仅作模板。
+[python]
+docling = "~/venvs/docling/bin/python"
+
+[timeout_s]
+default = 300
+docling = 900
+
+# 大内存引擎单独串行
+[serial]
+engines = ["docling"]

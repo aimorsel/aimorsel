@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url><loc>https://aimorsel.dev/</loc>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aimorsel.dev/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://aimorsel.dev/en/"/></url>
+  <url><loc>https://aimorsel.dev/download/</loc>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aimorsel.dev/download/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://aimorsel.dev/en/download/"/></url>
+  <url><loc>https://aimorsel.dev/docs/</loc>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aimorsel.dev/docs/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://aimorsel.dev/en/docs/"/></url>
+  <url><loc>https://aimorsel.dev/docs/mcp/</loc>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://aimorsel.dev/docs/mcp/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://aimorsel.dev/en/docs/mcp/"/></url>
+  <url><loc>https://aimorsel.dev/en/</loc></url>
+  <url><loc>https://aimorsel.dev/en/download/</loc></url>
+  <url><loc>https://aimorsel.dev/en/docs/</loc></url>
+  <url><loc>https://aimorsel.dev/en/docs/mcp/</loc></url>
+</urlset>
