@@ -61,8 +61,9 @@
           <div class="row row--on"><span class="path">3.2　Financial summary <span class="dim">· 2 tables</span></span><span class="pg">p.12–14</span></div>
           <div class="row"><span class="path">4　Risk factors</span><span class="pg">p.15–22</span></div>
         </div>
-        <p class="desk__step">only this section enters the context</p>
+        <p class="desk__step">only this section enters the context — or search across documents</p>
         <div class="deskbar"><span class="fn">get_section</span>("annual-report.pdf", "Financial summary")</div>
+        <div class="deskbar"><span class="fn">search_documents</span>("gross margin")</div>
         <div class="snip">
           <mark>Gross margin</mark> for the year was 41.2%, up 2.6 points on the prior year, driven mainly by…
           <span class="src">source: annual-report.pdf · p.12 · 3.2 Financial summary</span>
@@ -98,9 +99,10 @@
             <div class="port"><i></i>IMAGE</div>
           </div>
           <div class="lane">
-            <div class="arr">→→→</div>
-            <div class="cut">NETWORK<br />NOT WIRED</div>
-            <div class="arr">→→→</div>
+            <div class="stub">✕ NETWORK</div>
+            <div class="arr arr--in">→</div>
+            <div class="engine">LOCAL ENGINE</div>
+            <div class="arr arr--out">→</div>
           </div>
           <div class="outs">
             <div>MARKDOWN</div>
@@ -140,7 +142,7 @@
           <div class="blk blk--t"><span class="tag">paragraph · p.3</span>
             <div class="bar"></div><div class="bar"></div><div class="bar bar--s"></div>
           </div>
-          <div class="blk blk--t"><span class="tag">table · 4×6 · p.4</span>
+          <div class="blk blk--t"><span class="tag">table · 4×3 · p.4</span>
             <div class="cells"><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div>
           </div>
           <div class="blk blk--w"><span class="tag">scanned? · p.5</span>No text layer on this page — routed to OCR</div>
@@ -153,7 +155,7 @@
     <div class="sechead">
       <p class="eyebrow">In / out</p>
       <h2>Six formats in, five out</h2>
-      <p>Mix them in one folder and convert the lot. Scanned pages are detected and routed to OCR.</p>
+      <p>Mix them in one folder and convert the lot; scanned pages are detected and routed to OCR. Three derived products on top: RAG chunks (with page and heading path), table CSV, and a quality-check report.</p>
     </div>
     <div class="flow">
       <div class="flow__col">
@@ -166,16 +168,16 @@
         <div class="chip">Images<em>png jpg tiff bmp webp gif</em></div>
       </div>
       <div class="flow__mid">
-        <div class="flow__arr">→→→</div>
+        <div class="flow__arr">→</div>
         <div class="flow__engine">Layout analysis · local</div>
-        <div class="flow__arr">→→→</div>
+        <div class="flow__arr">→</div>
       </div>
       <div class="flow__col">
         <p class="flow__lab">Output</p>
         <div class="chip">Markdown<em>for people</em></div>
         <div class="chip">JSON tree<em>for programs</em></div>
-        <div class="chip">RAG chunks<em>jsonl · page + heading path</em></div>
-        <div class="chip">Table CSV<em>one file per table</em></div>
+        <div class="chip">HTML<em>with structure tags</em></div>
+        <div class="chip">Plain text<em>txt</em></div>
         <div class="chip">Annotated PDF<em>check the parse</em></div>
       </div>
     </div>
@@ -242,52 +244,54 @@
 
   <section class="wrap sec" id="bench">
     <div class="sechead">
-      <p class="eyebrow">Our own benchmark</p>
-      <h2>The numbers are in the repo, and you can recompute every row</h2>
-      <p>731 public documents × 5 engines = 3,224 records. Ground truth is parsed from the source files themselves (arXiv LaTeX sources, the HTML editions of statutes, the known structure of generated files) — no human scoring, no LLM as judge.</p>
+      <p class="eyebrow">Benchmark</p>
+      <h2>All 731 files converted, fidelity on par with the specialist engines</h2>
+      <p>731 public documents across 8 formats, run side by side with four open-source tools: docling, pymupdf4llm, markitdown and pdfplumber. The scoring is public and identical for every engine: ground truth comes straight from the source files (LaTeX sources, HTML originals, the known structure of generated files), with no human scoring.</p>
     </div>
-    <div class="charts">
-      <figure class="chart">
-        <figcaption class="chart__t"><b>Coverage</b><span>Files converted out of the 731-file mixed corpus</span></figcaption>
+    <figure class="chart chart--one">
+      <figcaption class="chart__t"><b>Five engines, three metrics</b><span>Same 731-file public corpus · colour = engine</span></figcaption>
+      <p class="chart__legend"><span><i class="sw sw--us"></i>AImorsel</span><span><i class="sw sw--docling"></i>docling</span><span><i class="sw sw--pymupdf"></i>pymupdf4llm</span><span><i class="sw sw--markitdown"></i>markitdown</span><span><i class="sw sw--pdfplumber"></i>pdfplumber</span></p>
+      <div class="cgroup">
+        <h4 class="cgroup__t">Coverage <span>Files converted out of 731</span></h4>
         <div class="bars">
-        <div class="bars__row bars__row--us"><span class="bars__l">AImorsel</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="100.0" height="10"/></svg><span class="bars__v">731 · 100%</span></div>
-        <div class="bars__row"><span class="bars__l">markitdown</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="73.7" height="10"/></svg><span class="bars__v">539 · 74%</span></div>
-        <div class="bars__row"><span class="bars__l">pymupdf4llm</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="40.1" height="10"/></svg><span class="bars__v">293 · 40%</span></div>
-        <div class="bars__row"><span class="bars__l">pdfplumber</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="39.5" height="10"/></svg><span class="bars__v">289 · 40%</span></div>
+          <div class="bars__row bars__row--us"><span class="bars__l">AImorsel</span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="100.0" height="10"/></svg></span><span class="bars__v">731 · 100%</span></div>
+          <div class="bars__row"><span class="bars__l">markitdown</span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--markitdown" width="73.7" height="10"/></svg></span><span class="bars__v">539 · 74%</span></div>
+          <div class="bars__row"><span class="bars__l">pymupdf4llm</span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--pymupdf" width="40.1" height="10"/></svg></span><span class="bars__v">293 · 40%</span></div>
+          <div class="bars__row"><span class="bars__l">pdfplumber</span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--pdfplumber" width="39.5" height="10"/></svg></span><span class="bars__v">289 · 40%</span></div>
+          <div class="bars__row bars__row--note"><span class="bars__l">docling</span><span class="bars__note">300-file subset only, not charted</span></div>
         </div>
-      </figure>
-      <figure class="chart">
-        <figcaption class="chart__t"><b>Text fidelity</b><span>Pairwise, on documents both engines succeeded on</span></figcaption>
+      </div>
+      <div class="cgroup">
+        <h4 class="cgroup__t">Text fidelity <span>Pairwise, on documents both engines succeeded on · other vs AImorsel</span></h4>
         <div class="bars">
-        <div class="bars__row"><span class="bars__l">docling<small>n=299</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="84.1" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="83.9" height="10"/></svg></span><span class="bars__v">0.841 / <b>0.839</b></span></div>
-        <div class="bars__row"><span class="bars__l">pymupdf4llm<small>n=293</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="77.5" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="77.3" height="10"/></svg></span><span class="bars__v">0.775 / <b>0.773</b></span></div>
-        <div class="bars__row"><span class="bars__l">markitdown<small>n=539</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="71.5" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="84.2" height="10"/></svg></span><span class="bars__v">0.715 / <b>0.842</b></span></div>
-        <div class="bars__row"><span class="bars__l">pdfplumber<small>n=289</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="57.4" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="77.8" height="10"/></svg></span><span class="bars__v">0.574 / <b>0.778</b></span></div>
+          <div class="bars__row"><span class="bars__l">docling<small>n=299</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--docling" width="84.1" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="83.9" height="10"/></svg></span><span class="bars__v">0.841 <i>vs</i> <b>0.839</b></span></div>
+          <div class="bars__row"><span class="bars__l">pymupdf4llm<small>n=293</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--pymupdf" width="77.5" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="77.3" height="10"/></svg></span><span class="bars__v">0.775 <i>vs</i> <b>0.773</b></span></div>
+          <div class="bars__row"><span class="bars__l">markitdown<small>n=539</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--markitdown" width="71.5" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="84.2" height="10"/></svg></span><span class="bars__v">0.715 <i>vs</i> <b>0.842</b></span></div>
+          <div class="bars__row"><span class="bars__l">pdfplumber<small>n=289</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--pdfplumber" width="57.4" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="77.8" height="10"/></svg></span><span class="bars__v">0.574 <i>vs</i> <b>0.778</b></span></div>
         </div>
-        <p class="chart__legend"><span><i></i>Other engine</span><span><i class="us"></i>AImorsel</span></p>
-      </figure>
-      <figure class="chart">
-        <figcaption class="chart__t"><b>Median time</b><span>Seconds per file, shorter is better</span></figcaption>
+      </div>
+      <div class="cgroup">
+        <h4 class="cgroup__t">Median time <span>Seconds per file · shorter is better</span></h4>
         <div class="bars">
-        <div class="bars__row"><span class="bars__l">pdfplumber</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="4.5" height="10"/></svg><span class="bars__v">0.5 s</span></div>
-        <div class="bars__row"><span class="bars__l">markitdown</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="7.1" height="10"/></svg><span class="bars__v">0.8 s</span></div>
-        <div class="bars__row bars__row--us"><span class="bars__l">AImorsel</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="14.3" height="10"/></svg><span class="bars__v">1.6 s</span></div>
-        <div class="bars__row"><span class="bars__l">pymupdf4llm</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="64.3" height="10"/></svg><span class="bars__v">7.2 s</span></div>
-        <div class="bars__row"><span class="bars__l">docling</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="100.0" height="10"/></svg><span class="bars__v">11.2 s</span></div>
+          <div class="bars__row"><span class="bars__l">pdfplumber</span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--pdfplumber" width="4.5" height="10"/></svg></span><span class="bars__v">0.5 s</span></div>
+          <div class="bars__row"><span class="bars__l">markitdown</span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--markitdown" width="7.1" height="10"/></svg></span><span class="bars__v">0.8 s</span></div>
+          <div class="bars__row bars__row--us"><span class="bars__l">AImorsel</span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="14.3" height="10"/></svg></span><span class="bars__v">1.6 s</span></div>
+          <div class="bars__row"><span class="bars__l">pymupdf4llm</span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--pymupdf" width="64.3" height="10"/></svg></span><span class="bars__v">7.2 s</span></div>
+          <div class="bars__row"><span class="bars__l">docling</span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--docling" width="100.0" height="10"/></svg></span><span class="bars__v">11.2 s</span></div>
         </div>
-      </figure>
-    </div>
+      </div>
+    </figure>
     <ul class="notes">
-      <li>Coverage counts unsupported formats as failures — it measures “drop a mixed folder in, how many come out”. docling takes about 11 s per file, so it only ran a 300-file stratified subset (299 succeeded) and is left out of the coverage chart.</li>
-      <li>Fidelity is on par with docling and pymupdf4llm at a tenth of the time; peak memory p95 is 2.0 GB for docling, 620 MB for us.</li>
-      <li>markitdown and pdfplumber emit 10 Arabic documents in visual order — not a character missing, yet search and tokenization are broken. We and docling don't.</li>
+      <li>Coverage counts unsupported formats as failures: drop a mixed folder in, how many come out. docling takes about 11 s per file and ran a 300-file stratified subset only.</li>
+      <li>Fidelity on par with docling and pymupdf4llm, an order of magnitude faster, and lighter: AImorsel peaks at 620 MB, docling at 2.0 GB.</li>
+      <li>markitdown and pdfplumber emit 10 Arabic documents in visual order — no characters lost, but search and tokenization break; AImorsel and docling don't have this problem.</li>
     </ul>
     <p class="callout callout--gap">
-      <b>Two things need saying.</b> On the small 77-file intersection where all five engines succeed, docling and pymupdf4llm score higher than us on text similarity (0.92 vs 0.82) — a sample skewed towards standard single-column PDFs; we still lead on structure there. Our weakest link is scans and images: digit fidelity is 0.716 (0.891 with a text layer), so numbers from scans are fine for locating, not for copying into a table.
+      <b>Two things need saying.</b> On the small 77-file intersection where all five engines succeed, docling and pymupdf4llm score higher than AImorsel on text similarity (0.92 vs 0.82); that subset skews to standard single-column PDFs, and AImorsel still leads on structure there. The weakest link is scans and images: digit fidelity 0.716 (0.891 with a text layer) — numbers from scans need a human second check.
     </p>
     <p class="fineprint">
       <a href="https://github.com/aimorsel/aimorsel/blob/main/bench/RESULTS.md">Full result tables and methodology →</a>
-      Corpus list, download scripts, ground-truth generators, metric implementations and batch runners all live in <code>bench/</code>; re-running the same manifest reproduces the numbers within 1%.
+      Corpus, scripts, ground-truth generators and metric code are in <code>bench/</code>; a re-run reproduces the numbers within 1%.
     </p>
   </section>
 
@@ -301,20 +305,20 @@
       <div class="dlcard">
         <b>macOS</b>
         <span class="arch">Apple Silicon · arm64</span>
-        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.0/morsel-v1.0.0-macos-arm64.dmg">Download .dmg</a>
-        <span class="meta">v1.0.0 · signed &amp; notarized</span>
+        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.2/morsel-v1.0.2-macos-arm64.dmg">Download .dmg</a>
+        <span class="meta">v1.0.2 · 121 MB · signed &amp; notarized</span>
       </div>
       <div class="dlcard">
         <b>macOS</b>
         <span class="arch">Intel · x86_64</span>
-        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.0/morsel-v1.0.0-macos-x86_64.dmg">Download .dmg</a>
-        <span class="meta">v1.0.0 · signed &amp; notarized</span>
+        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.2/morsel-v1.0.2-macos-x86_64.dmg">Download .dmg</a>
+        <span class="meta">v1.0.2 · 122 MB · signed &amp; notarized</span>
       </div>
       <div class="dlcard">
         <b>Windows</b>
         <span class="arch">x64</span>
-        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.0/morsel-v1.0.0-windows-x64.zip">Download .zip</a>
-        <span class="meta">v1.0.0 · unsigned</span>
+        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.2/morsel-v1.0.2-windows-x64.zip">Download .zip</a>
+        <span class="meta">v1.0.2 · 116 MB · <span class="meta__warn">unsigned</span></span>
       </div>
     </div>
     <p class="fineprint">

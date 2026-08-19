@@ -60,8 +60,9 @@
           <div class="row row--on"><span class="path">3.2　财务摘要 <span class="dim">· 含表格 2 个</span></span><span class="pg">p.12–14</span></div>
           <div class="row"><span class="path">4　风险因素</span><span class="pg">p.15–22</span></div>
         </div>
-        <p class="desk__step">只把这一节取进上下文</p>
+        <p class="desk__step">只把这一节取进上下文，或按词跨文档搜</p>
         <div class="deskbar"><span class="fn">get_section</span>("年报.pdf", "财务摘要")</div>
+        <div class="deskbar"><span class="fn">search_documents</span>("毛利率")</div>
         <div class="snip">
           本年度<mark>毛利率</mark> 41.2%，较上年提升 2.6 个百分点，主要来自……
           <span class="src">来源：年报.pdf · p.12 · 3.2 财务摘要</span>
@@ -96,9 +97,10 @@
             <div class="port"><i></i>IMAGE</div>
           </div>
           <div class="lane">
-            <div class="arr">→→→</div>
-            <div class="cut">NETWORK<br />NOT WIRED</div>
-            <div class="arr">→→→</div>
+            <div class="stub">✕ 网络</div>
+            <div class="arr arr--in">→</div>
+            <div class="engine">本机引擎</div>
+            <div class="arr arr--out">→</div>
           </div>
           <div class="outs">
             <div>MARKDOWN</div>
@@ -136,7 +138,7 @@
           <div class="blk blk--t"><span class="tag">段落 · p.3</span>
             <div class="bar"></div><div class="bar"></div><div class="bar bar--s"></div>
           </div>
-          <div class="blk blk--t"><span class="tag">表格 · 4×6 · p.4</span>
+          <div class="blk blk--t"><span class="tag">表格 · 4×3 · p.4</span>
             <div class="cells"><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div>
           </div>
           <div class="blk blk--w"><span class="tag">疑似扫描页 · p.5</span>整页没有文字层，已转给 OCR 通道</div>
@@ -149,7 +151,7 @@
     <div class="sechead">
       <p class="eyebrow">进 / 出</p>
       <h2>六种进，五种出</h2>
-      <p>混在一个文件夹里批量转也行。扫描件会被自动认出来，转到 OCR 通道。</p>
+      <p>混在一个文件夹里批量转也行，扫描件会被自动认出来转到 OCR 通道。另有三种加工产物：RAG 分块（带页码与标题路径）、表格 CSV、质量自检报告。</p>
     </div>
     <div class="flow">
       <div class="flow__col">
@@ -162,16 +164,16 @@
         <div class="chip">图片<em>png jpg tiff bmp webp gif</em></div>
       </div>
       <div class="flow__mid">
-        <div class="flow__arr">→→→</div>
+        <div class="flow__arr">→</div>
         <div class="flow__engine">版面分析 · 本机</div>
-        <div class="flow__arr">→→→</div>
+        <div class="flow__arr">→</div>
       </div>
       <div class="flow__col">
         <p class="flow__lab">输出</p>
         <div class="chip">Markdown<em>给人读</em></div>
         <div class="chip">JSON 结构树<em>给程序</em></div>
-        <div class="chip">RAG 分块<em>jsonl · 带页码与标题路径</em></div>
-        <div class="chip">表格 CSV<em>一表一件</em></div>
+        <div class="chip">HTML<em>带结构标签</em></div>
+        <div class="chip">纯文本<em>txt</em></div>
         <div class="chip">标注版 PDF<em>核对识别结果</em></div>
       </div>
     </div>
@@ -237,52 +239,54 @@
 
   <section class="wrap sec" id="bench">
     <div class="sechead">
-      <p class="eyebrow">自有评测</p>
-      <h2>数字都在仓库里，每一行都能自己复算</h2>
-      <p>731 份公开语料 × 5 个引擎 = 3224 条记录。真值直接从源文件解析（arXiv 的 LaTeX 源码、法规的 HTML 版、合成件的已知结构），不是人打分，也不用大模型当裁判。</p>
+      <p class="eyebrow">测试对比</p>
+      <h2>731 份文档全部转出，保真不输专用引擎</h2>
+      <p>731 份公开文档、8 类格式，与 docling、pymupdf4llm、markitdown、pdfplumber 四个开源工具同批对比。评分标准公开且一致：真值直接取自源文件（LaTeX 源码、HTML 原件、合成件的已知结构），同一套指标衡量所有引擎，没有人工打分。</p>
     </div>
-    <div class="charts">
-      <figure class="chart">
-        <figcaption class="chart__t"><b>覆盖</b><span>731 份混装语料里转成功的份数</span></figcaption>
+    <figure class="chart chart--one">
+      <figcaption class="chart__t"><b>五个引擎，三项指标</b><span>同一批 731 份公开语料 · 颜色 = 引擎</span></figcaption>
+      <p class="chart__legend"><span><i class="sw sw--us"></i>AImorsel</span><span><i class="sw sw--docling"></i>docling</span><span><i class="sw sw--pymupdf"></i>pymupdf4llm</span><span><i class="sw sw--markitdown"></i>markitdown</span><span><i class="sw sw--pdfplumber"></i>pdfplumber</span></p>
+      <div class="cgroup">
+        <h4 class="cgroup__t">覆盖 <span>731 份里转成功的份数</span></h4>
         <div class="bars">
-        <div class="bars__row bars__row--us"><span class="bars__l">AImorsel</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="100.0" height="10"/></svg><span class="bars__v">731 · 100%</span></div>
-        <div class="bars__row"><span class="bars__l">markitdown</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="73.7" height="10"/></svg><span class="bars__v">539 · 74%</span></div>
-        <div class="bars__row"><span class="bars__l">pymupdf4llm</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="40.1" height="10"/></svg><span class="bars__v">293 · 40%</span></div>
-        <div class="bars__row"><span class="bars__l">pdfplumber</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="39.5" height="10"/></svg><span class="bars__v">289 · 40%</span></div>
+          <div class="bars__row bars__row--us"><span class="bars__l">AImorsel</span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="100.0" height="10"/></svg></span><span class="bars__v">731 · 100%</span></div>
+          <div class="bars__row"><span class="bars__l">markitdown</span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--markitdown" width="73.7" height="10"/></svg></span><span class="bars__v">539 · 74%</span></div>
+          <div class="bars__row"><span class="bars__l">pymupdf4llm</span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--pymupdf" width="40.1" height="10"/></svg></span><span class="bars__v">293 · 40%</span></div>
+          <div class="bars__row"><span class="bars__l">pdfplumber</span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--pdfplumber" width="39.5" height="10"/></svg></span><span class="bars__v">289 · 40%</span></div>
+          <div class="bars__row bars__row--note"><span class="bars__l">docling</span><span class="bars__note">只跑了 300 份子集，不进图</span></div>
         </div>
-      </figure>
-      <figure class="chart">
-        <figcaption class="chart__t"><b>文本保真</b><span>逐对比较，只算双方都成功的文档</span></figcaption>
+      </div>
+      <div class="cgroup">
+        <h4 class="cgroup__t">文本保真 <span>逐对比较，只算双方都成功的文档 · 对手 vs AImorsel</span></h4>
         <div class="bars">
-        <div class="bars__row"><span class="bars__l">docling<small>n=299</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="84.1" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="83.9" height="10"/></svg></span><span class="bars__v">0.841 / <b>0.839</b></span></div>
-        <div class="bars__row"><span class="bars__l">pymupdf4llm<small>n=293</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="77.5" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="77.3" height="10"/></svg></span><span class="bars__v">0.775 / <b>0.773</b></span></div>
-        <div class="bars__row"><span class="bars__l">markitdown<small>n=539</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="71.5" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="84.2" height="10"/></svg></span><span class="bars__v">0.715 / <b>0.842</b></span></div>
-        <div class="bars__row"><span class="bars__l">pdfplumber<small>n=289</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="57.4" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="77.8" height="10"/></svg></span><span class="bars__v">0.574 / <b>0.778</b></span></div>
+          <div class="bars__row"><span class="bars__l">docling<small>n=299</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--docling" width="84.1" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="83.9" height="10"/></svg></span><span class="bars__v">0.841 <i>vs</i> <b>0.839</b></span></div>
+          <div class="bars__row"><span class="bars__l">pymupdf4llm<small>n=293</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--pymupdf" width="77.5" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="77.3" height="10"/></svg></span><span class="bars__v">0.775 <i>vs</i> <b>0.773</b></span></div>
+          <div class="bars__row"><span class="bars__l">markitdown<small>n=539</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--markitdown" width="71.5" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="84.2" height="10"/></svg></span><span class="bars__v">0.715 <i>vs</i> <b>0.842</b></span></div>
+          <div class="bars__row"><span class="bars__l">pdfplumber<small>n=289</small></span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--pdfplumber" width="57.4" height="10"/></svg><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="77.8" height="10"/></svg></span><span class="bars__v">0.574 <i>vs</i> <b>0.778</b></span></div>
         </div>
-        <p class="chart__legend"><span><i></i>对手</span><span><i class="us"></i>AImorsel</span></p>
-      </figure>
-      <figure class="chart">
-        <figcaption class="chart__t"><b>中位耗时</b><span>秒 / 份，越短越好</span></figcaption>
+      </div>
+      <div class="cgroup">
+        <h4 class="cgroup__t">中位耗时 <span>秒 / 份 · 越短越好</span></h4>
         <div class="bars">
-        <div class="bars__row"><span class="bars__l">pdfplumber</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="4.5" height="10"/></svg><span class="bars__v">0.5 s</span></div>
-        <div class="bars__row"><span class="bars__l">markitdown</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="7.1" height="10"/></svg><span class="bars__v">0.8 s</span></div>
-        <div class="bars__row bars__row--us"><span class="bars__l">AImorsel</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="14.3" height="10"/></svg><span class="bars__v">1.6 s</span></div>
-        <div class="bars__row"><span class="bars__l">pymupdf4llm</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="64.3" height="10"/></svg><span class="bars__v">7.2 s</span></div>
-        <div class="bars__row"><span class="bars__l">docling</span><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f" width="100.0" height="10"/></svg><span class="bars__v">11.2 s</span></div>
+          <div class="bars__row"><span class="bars__l">pdfplumber</span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--pdfplumber" width="4.5" height="10"/></svg></span><span class="bars__v">0.5 s</span></div>
+          <div class="bars__row"><span class="bars__l">markitdown</span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--markitdown" width="7.1" height="10"/></svg></span><span class="bars__v">0.8 s</span></div>
+          <div class="bars__row bars__row--us"><span class="bars__l">AImorsel</span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--us" width="14.3" height="10"/></svg></span><span class="bars__v">1.6 s</span></div>
+          <div class="bars__row"><span class="bars__l">pymupdf4llm</span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--pymupdf" width="64.3" height="10"/></svg></span><span class="bars__v">7.2 s</span></div>
+          <div class="bars__row"><span class="bars__l">docling</span><span class="bars__pair"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect class="bar__t" width="100" height="10"/><rect class="bar__f bar__f--docling" width="100.0" height="10"/></svg></span><span class="bars__v">11.2 s</span></div>
         </div>
-      </figure>
-    </div>
+      </div>
+    </figure>
     <ul class="notes">
-      <li>覆盖把不支持的格式按失败计，衡量的是「一个混装文件夹丢进去，多少份能出东西」。docling 约 11 秒一份，只跑了 300 份分层子集（成功 299），所以不进覆盖图。</li>
-      <li>与 docling、pymupdf4llm 保真持平，耗时少一个数量级；峰值内存 docling p95 2.0 GB，我们 620 MB。</li>
-      <li>markitdown 与 pdfplumber 把 10 份阿拉伯语文档按视觉序输出——字一个不少，检索和分词全部失效。我们与 docling 没犯。</li>
+      <li>覆盖把不支持的格式按失败计：一个混装文件夹丢进去，多少份能出东西。docling 约 11 秒一份，只跑了 300 份分层子集。</li>
+      <li>保真与 docling、pymupdf4llm 持平，速度快一个数量级，内存也更省：AImorsel 峰值 620 MB，docling 2.0 GB。</li>
+      <li>markitdown 与 pdfplumber 把 10 份阿拉伯语文档按视觉序输出，字没少，但检索和分词全部失效；AImorsel 与 docling 没有这个问题。</li>
     </ul>
     <p class="callout callout--gap">
-      <b>两处得说清楚。</b>在 77 份「五个引擎全成功」的小交集上，docling 与 pymupdf4llm 的文本相似度高于我们（0.92 对 0.82）——样本偏标准单栏 PDF，结构指标仍是我们领先。最弱一环是扫描件与图片：数字保真只有 0.716（有文字层 0.891），扫描件里的数字只适合检索定位，别直接进表格。
+      <b>两处得说清楚。</b>在 77 份「五个引擎全成功」的小交集上，docling 与 pymupdf4llm 的文本相似度高于 AImorsel（0.92 对 0.82）；该子集偏标准单栏 PDF，结构指标仍是 AImorsel 领先。最弱一环是扫描件与图片：数字保真 0.716（有文字层 0.891），扫描件里的数字需要人工二次校验。
     </p>
     <p class="fineprint">
       <a href="https://github.com/aimorsel/aimorsel/blob/main/bench/RESULTS.md">完整结果表与口径说明 →</a>
-      语料清单、下载脚本、真值生成器、指标实现与跑批脚本都在仓库的 <code>bench/</code> 里，同一份 manifest 重跑误差小于 1%。
+      语料、脚本、真值生成器与指标实现都在仓库 <code>bench/</code> 里，重跑误差小于 1%。
     </p>
   </section>
 
@@ -296,20 +300,20 @@
       <div class="dlcard">
         <b>macOS</b>
         <span class="arch">Apple Silicon · arm64</span>
-        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.0/morsel-v1.0.0-macos-arm64.dmg">下载 .dmg</a>
-        <span class="meta">v1.0.0 · 已签名并公证</span>
+        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.2/morsel-v1.0.2-macos-arm64.dmg">下载 .dmg</a>
+        <span class="meta">v1.0.2 · 121 MB · 已签名并公证</span>
       </div>
       <div class="dlcard">
         <b>macOS</b>
         <span class="arch">Intel · x86_64</span>
-        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.0/morsel-v1.0.0-macos-x86_64.dmg">下载 .dmg</a>
-        <span class="meta">v1.0.0 · 已签名并公证</span>
+        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.2/morsel-v1.0.2-macos-x86_64.dmg">下载 .dmg</a>
+        <span class="meta">v1.0.2 · 122 MB · 已签名并公证</span>
       </div>
       <div class="dlcard">
         <b>Windows</b>
         <span class="arch">x64</span>
-        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.0/morsel-v1.0.0-windows-x64.zip">下载 .zip</a>
-        <span class="meta">v1.0.0 · 未签名</span>
+        <a class="btn btn--primary dlcard__btn" href="https://github.com/aimorsel/aimorsel/releases/download/v1.0.2/morsel-v1.0.2-windows-x64.zip">下载 .zip</a>
+        <span class="meta">v1.0.2 · 116 MB · <span class="meta__warn">未签名</span></span>
       </div>
     </div>
     <p class="fineprint">

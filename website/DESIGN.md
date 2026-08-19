@@ -50,8 +50,9 @@
 - `.page` / `.blk` / `.tag` 标注文档图
 - `.tablewrap--narrow` 表格放进两栏版面时的变体（不加会撑破容器）
 - `.docs` 文档页三栏模板
-- `.charts` / `.chart` / `.bars` 评测条形图（首页 `#bench`）——纯 HTML + 内联 SVG，条宽是 SVG `width` 属性不是 `style`；
-  配色只用中性色（我们 `--ink`、对手 `--ink-3`），不占用四个语义色
+- `.chart` / `.cgroup` / `.bars` 评测条形图（首页 `#bench`）——一张图三组指标，纯 HTML + 内联 SVG，条宽是 SVG `width` 属性不是 `style`；
+  **颜色 = 引擎**，用独立的分类色 token `--c-us/--c-docling/--c-pymupdf/--c-markitdown/--c-pdfplumber`（浅/暗各一套），
+  只在这张图和它的图例里出现，不占用也不混用四个语义色
 
 阴影只有两级，其余一律 1px 描边。圆角三档，`--r-pill` 只给页码徽标。
 
